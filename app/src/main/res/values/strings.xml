@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Puszek</string>
+    <string name="puszek">PUSZEK</string>
+    <string name="password">Hasło</string>
+    <string name="login">Login</string>
+    <string name="sign_in">Zaloguj się</string>
+    <string name="register">Zarejestruj się</string>
+    <string name="buttonImage">buttonImage</string>
+    <string name="registration">Rejestracja</string>
+    <string name="repeat_password">Powtórz hasło</string>
+    <string name="address">Adres</string>
+    <string name="street">Ulica</string>
+</resources>

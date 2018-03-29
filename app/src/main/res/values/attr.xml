@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="fontPath" format="string"/>
+    <attr name="mainFontColor" format="color"/>
+    <attr name="accentFontColor" format="color"/>
+</resources>
