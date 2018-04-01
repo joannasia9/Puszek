@@ -28,6 +28,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/registration"
                 android:textAlignment="center"
+                android:textColor="?attr/titlesColor"
                 android:textSize="30sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -42,6 +43,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/login"
                 android:textAlignment="center"
+                android:textColor="?attr/titlesColor"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,13 +52,15 @@
             <EditText
                 android:id="@+id/regLoginEt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/min_circles"
                 android:ems="10"
                 android:hint="@string/login"
                 android:inputType="textPersonName"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -70,6 +74,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/password"
                 android:textAlignment="center"
+                android:textColor="?attr/titlesColor"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -78,13 +83,15 @@
             <EditText
                 android:id="@+id/regPasswordEt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/min_circles"
                 android:ems="10"
                 android:hint="@string/password"
                 android:inputType="textPassword"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -93,13 +100,15 @@
             <EditText
                 android:id="@+id/regRepPasswordEt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/min_circles"
                 android:ems="10"
                 android:hint="@string/repeat_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textAlignment="center" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -110,19 +119,46 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/address"
                 android:textAlignment="center"
+                android:textColor="?attr/titlesColor"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/city"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/min_circles"
+                android:ems="10"
+                android:hint="@string/city_name"
+                android:inputType="textPersonName"
+                android:textAlignment="center" />
+
+            <EditText
                 android:id="@+id/regStreetEt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:background="@drawable/min_circles"
                 android:ems="10"
                 android:hint="@string/street"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:textAlignment="center" />
+
+            <EditText
+                android:id="@+id/houseNumber"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/min_circles"
+                android:ems="10"
+                android:hint="@string/house_number"
+                android:inputType="numberSigned"
+                android:textAlignment="center" />
 
             <Button
                 android:id="@+id/regUserButton"
@@ -131,8 +167,10 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:background="@drawable/button_gradient"
                 android:onClick="registerUser"
                 android:text="@string/register"
+                android:textColor="?attr/buttonTextColor"
                 android:textSize="30sp" />
 
         </LinearLayout>

@@ -3,4 +3,6 @@
     <attr name="fontPath" format="string"/>
     <attr name="mainFontColor" format="color"/>
     <attr name="accentFontColor" format="color"/>
+    <attr name="buttonTextColor" format="color"/>
+    <attr name="titlesColor" format="color"/>
 </resources>
