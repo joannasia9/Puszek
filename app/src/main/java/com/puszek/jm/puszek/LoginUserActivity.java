@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,6 +27,9 @@ public class LoginUserActivity extends AppCompatActivity {
         signInButton = findViewById(R.id.signInButtonMain);
         login = findViewById(R.id.loginEditText);
         password = findViewById(R.id.passwordEditText);
+
+        Animation iconAnimation = AnimationUtils.loadAnimation(this, R.anim.login_icon_anim);
+        imageView.startAnimation(iconAnimation);
 
     }
 

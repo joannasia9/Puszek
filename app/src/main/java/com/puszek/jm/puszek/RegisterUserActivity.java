@@ -4,9 +4,12 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EdgeEffect;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.puszek.jm.puszek.helpers.FieldsValidator;
 
@@ -17,7 +20,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     EditText password;
     EditText repeatedPassword;
     EditText street;
-    EditText city;
+    EditText district;
     EditText hNumber;
     Button registerUserButton;
     FieldsValidator validator;
@@ -33,10 +36,24 @@ public class RegisterUserActivity extends AppCompatActivity {
         password = findViewById(R.id.regPasswordEt);
         repeatedPassword = findViewById(R.id.regRepPasswordEt);
         street = findViewById(R.id.regStreetEt);
-        city = findViewById(R.id.city);
+        district = findViewById(R.id.city);
         hNumber = findViewById(R.id.houseNumber);
 
         registerUserButton = findViewById(R.id.regUserButton);
+
+        View.OnClickListener animationListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAnimation(v);
+            }
+        };
+        login.setOnClickListener(animationListener);
+        password.setOnClickListener(animationListener);
+        repeatedPassword.setOnClickListener(animationListener);
+        street.setOnClickListener(animationListener);
+        district.setOnClickListener(animationListener);
+        hNumber.setOnClickListener(animationListener);
+
     }
 
     @Override
@@ -46,9 +63,26 @@ public class RegisterUserActivity extends AppCompatActivity {
 
     public void registerUser(View view) {
         if(validator.isValidField(login)&&validator.isValidPassword(password,repeatedPassword)
-                && validator.isValidField(city) &&validator.isValidField(street)&&validator.isValidHouseNumber(hNumber)){
+                && validator.isValidField(district) &&validator.isValidField(street)&&validator.isValidHouseNumber(hNumber)){
             //register user at database
             System.out.println("HURRAAAA");
         }
     }
+
+    public void setAnimation(View v){
+        int id = v.getId();
+        System.out.println("IDD: "+id);
+
+        login.clearAnimation();
+        password.clearAnimation();
+        repeatedPassword.clearAnimation();
+        street.clearAnimation();
+        hNumber.clearAnimation();
+        district.clearAnimation();
+
+        Animation iconAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.dots_anim);
+        v.startAnimation(iconAnimation);
+    }
+
+
 }

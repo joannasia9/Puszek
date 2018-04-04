@@ -1,9 +1,5 @@
 package com.puszek.jm.puszek;
-
 import android.app.Application;
-
-import com.puszek.jm.puszek.helpers.FontsOverride;
-
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**

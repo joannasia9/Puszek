@@ -11,9 +11,9 @@
     <string name="address">Adres</string>
     <string name="street">Ulica</string>
     <string name="house_number">Numer budynku</string>
-    <string name="city_name">Miejscowość</string>
     <string name="required">Pole wymagane</string>
     <string name="min_signs_value">Co najmniej 6 znaków</string>
     <string name="identity_required">Hasła powinny być identyczne</string>
     <string name="incorrect_format">Nieprawidłowy format</string>
+    <string name="district">Dzielnica</string>
 </resources>

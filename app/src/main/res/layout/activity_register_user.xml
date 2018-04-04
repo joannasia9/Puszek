@@ -129,9 +129,10 @@
                 android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/min_circles"
                 android:ems="10"
-                android:hint="@string/city_name"
+                android:hint="@string/district"
                 android:inputType="textPersonName"
                 android:textAlignment="center" />
 
@@ -154,6 +155,7 @@
                 android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/min_circles"
                 android:ems="10"
                 android:hint="@string/house_number"
@@ -167,6 +169,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_gradient"
                 android:onClick="registerUser"
                 android:text="@string/register"
