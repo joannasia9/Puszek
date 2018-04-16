@@ -15,7 +15,7 @@ import com.puszek.jm.puszek.helpers.FieldsValidator;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class RegisterUserActivity extends AppCompatActivity {
+public class RegisterUserActivity extends MyBaseActivity {
     EditText login;
     EditText password;
     EditText repeatedPassword;
@@ -54,11 +54,6 @@ public class RegisterUserActivity extends AppCompatActivity {
         district.setOnClickListener(animationListener);
         hNumber.setOnClickListener(animationListener);
 
-    }
-
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     public void registerUser(View view) {

@@ -1,6 +1,7 @@
 package com.puszek.jm.puszek;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class LoginUserActivity extends AppCompatActivity {
+public class LoginUserActivity extends MyBaseActivity {
     ImageView imageView;
     Button signInButton;
     TextView login;
@@ -33,11 +34,7 @@ public class LoginUserActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
     public void signInUser(View view) {
+       startActivity(new Intent(this, MainMenuActivity.class));
     }
 }

@@ -16,4 +16,19 @@
     <string name="identity_required">Hasła powinny być identyczne</string>
     <string name="incorrect_format">Nieprawidłowy format</string>
     <string name="district">Dzielnica</string>
+    <string name="menu">Menu</string>
+    <string name="check">Sprawdź</string>
+    <string name="add">Dodaj</string>
+    <string name="settings">Ustawienia</string>
+    <string name="title_activity_preferences">Settings</string>
+
+    <string-array name="settings_entries">
+       <item>Login</item>
+        <item>Hasło</item>
+        <item>Dzielnica</item>
+        <item>Ulica</item>
+    </string-array>
+
+
+
 </resources>
