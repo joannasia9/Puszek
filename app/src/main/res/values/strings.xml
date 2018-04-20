@@ -21,6 +21,13 @@
     <string name="add">Dodaj</string>
     <string name="settings">Ustawienia</string>
     <string name="title_activity_preferences">Settings</string>
+    <string name="scan">Skanuj</string>
+    <string name="barcode">kod kreskowy</string>
+    <string name="packageStr">opakowanie</string>
+    <string name="okay">OK</string>
+    <string name="permission_camera_rationale">Permissions camera rationale</string>
+    <string name="no_camera_permission">Brak uprawnień do korzystania z aparatu.</string>
+    <string name="error_low_storage">BŁĄD: Za mało pamięci</string>
 
     <string-array name="settings_entries">
        <item>Login</item>

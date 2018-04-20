@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.puszek.jm.puszek">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -22,9 +25,18 @@
         <activity android:name=".LoginUserActivity" />
         <activity android:name=".RegisterUserActivity" />
         <activity android:name=".MainMenuActivity" />
-        <activity android:name=".ObjectVeryficationActivity" />
+        <activity android:name=".ObjectVerificationActivity" />
         <activity android:name=".ObjectAdditionActivity" />
         <activity android:name=".SettingsActivity" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
+
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode"/>
     </application>
+
 
 </manifest>

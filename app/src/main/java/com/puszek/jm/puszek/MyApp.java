@@ -11,7 +11,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/ArchitectsDaughter.ttf")
+                .setDefaultFontPath("fonts/architectsdaughter.otf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
 

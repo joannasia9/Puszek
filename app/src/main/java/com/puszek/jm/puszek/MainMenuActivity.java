@@ -1,18 +1,12 @@
 package com.puszek.jm.puszek;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridLayout;
-import android.widget.GridView;
 import android.widget.ListView;
 
 import com.puszek.jm.puszek.adapters.MainMenuAdapter;
-
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class MainMenuActivity extends MyBaseActivity {
     ListView listView;
@@ -33,7 +27,7 @@ public class MainMenuActivity extends MyBaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        startActivity(new Intent(getApplicationContext(), ObjectVeryficationActivity.class));
+                        startActivity(new Intent(getApplicationContext(), ObjectVerificationActivity.class));
                         break;
                     case 1:
                         startActivity(new Intent(getApplicationContext(), ObjectAdditionActivity.class));

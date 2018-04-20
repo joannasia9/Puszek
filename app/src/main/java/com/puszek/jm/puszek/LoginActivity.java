@@ -15,17 +15,6 @@ public class LoginActivity extends MyBaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/ArchitectsDaughter.ttf");
-
-        TextView textView = findViewById(R.id.textView);
-        textView.setTypeface(typeface);
-
-        Button loginButton = findViewById(R.id.signInButtonMain);
-        loginButton.setTypeface(typeface);
-
-        Button registerButton = findViewById(R.id.registerButtonMain);
-        registerButton.setTypeface(typeface);
-
     }
 
     public void goToLoginPanel(View view) {
