@@ -11,8 +11,6 @@
 # Java class files
 *.class
 
-*.bin
-*.lock
 
 # Generated files
 bin/

@@ -30,8 +30,6 @@
 
     </com.puszek.jm.puszek.ui.camera.CameraSourcePreview>
 
-
-
     <View
         android:id="@+id/transparency"
         android:layout_width="360dp"

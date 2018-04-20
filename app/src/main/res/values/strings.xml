@@ -28,6 +28,11 @@
     <string name="permission_camera_rationale">Permissions camera rationale</string>
     <string name="no_camera_permission">Brak uprawnień do korzystania z aparatu.</string>
     <string name="error_low_storage">BŁĄD: Za mało pamięci</string>
+    <string name="flash_unavailable">Flash niedostępny.</string>
+    <string name="go_to_settings">Nadaj uprawnienia w Ustawieniach</string>
+    <string name="memory_permission_required">Aby kontynuować zezwól na dostęp do multimediów i plików na Twoim urządzeniu.</string>
+    <string name="camera_permission_required">Aby kontunyować zezwól na dostęp do aparatu.</string>
+    <string name="internet_permission_required">Aby kontynuować zezwól na dostęp do Internetu.</string>
 
     <string-array name="settings_entries">
        <item>Login</item>

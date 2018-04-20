@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +21,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -102,7 +107,9 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedFps(20.0f);
 
+
         mCameraSource = builder.build();
+
     }
 
     @Override
@@ -192,5 +199,6 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
 
         }
     }
+
 
 }
