@@ -1,19 +1,19 @@
 package com.puszek.jm.puszek;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EdgeEffect;
 import android.widget.EditText;
-import android.widget.TextView;
 
+import com.puszek.jm.puszek.asynctasks.SendUserDetails;
 import com.puszek.jm.puszek.helpers.FieldsValidator;
 
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class RegisterUserActivity extends MyBaseActivity {
     EditText login;
@@ -22,6 +22,7 @@ public class RegisterUserActivity extends MyBaseActivity {
     EditText street;
     EditText district;
     EditText hNumber;
+    EditText email;
     Button registerUserButton;
     FieldsValidator validator;
 
@@ -38,6 +39,7 @@ public class RegisterUserActivity extends MyBaseActivity {
         street = findViewById(R.id.regStreetEt);
         district = findViewById(R.id.city);
         hNumber = findViewById(R.id.houseNumber);
+        email = findViewById(R.id.emailEt);
 
         registerUserButton = findViewById(R.id.regUserButton);
 
@@ -53,6 +55,7 @@ public class RegisterUserActivity extends MyBaseActivity {
         street.setOnClickListener(animationListener);
         district.setOnClickListener(animationListener);
         hNumber.setOnClickListener(animationListener);
+        email.setOnClickListener(animationListener);
 
     }
 
@@ -60,7 +63,9 @@ public class RegisterUserActivity extends MyBaseActivity {
         if(validator.isValidField(login)&&validator.isValidPassword(password,repeatedPassword)
                 && validator.isValidField(district) &&validator.isValidField(street)&&validator.isValidHouseNumber(hNumber)){
             //register user at database
-            System.out.println("HURRAAAA");
+            clearAllAnimations();
+            sendUserDataToServer();
+            System.out.println("Registered");
         }
     }
 
@@ -68,16 +73,37 @@ public class RegisterUserActivity extends MyBaseActivity {
         int id = v.getId();
         System.out.println("IDD: "+id);
 
-        login.clearAnimation();
-        password.clearAnimation();
-        repeatedPassword.clearAnimation();
-        street.clearAnimation();
-        hNumber.clearAnimation();
-        district.clearAnimation();
+        clearAllAnimations();
 
         Animation iconAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.dots_anim);
         v.startAnimation(iconAnimation);
     }
 
+    private void clearAllAnimations(){
+        login.clearAnimation();
+        password.clearAnimation();
+        email.clearAnimation();
+        repeatedPassword.clearAnimation();
+        street.clearAnimation();
+        hNumber.clearAnimation();
+        district.clearAnimation();
+
+    }
+
+    private void sendUserDataToServer(){
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("login", login.getText().toString().trim());
+            postData.put("email", email.getText().toString());
+            postData.put("password", password.getText().toString());
+            postData.put("district", district.getText().toString());
+            postData.put("street", street.getText().toString());
+            postData.put("number", hNumber.getText().toString());
+            SendUserDetails sendUserDetails = new SendUserDetails();
+            sendUserDetails.execute("https://afternoon-ridge-77405.herokuapp.com/api/v1/users/", postData.toString());
+            } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

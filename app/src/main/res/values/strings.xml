@@ -33,10 +33,13 @@
     <string name="memory_permission_required">Aby kontynuować zezwól na dostęp do multimediów i plików na Twoim urządzeniu.</string>
     <string name="camera_permission_required">Aby kontunyować zezwól na dostęp do aparatu.</string>
     <string name="internet_permission_required">Aby kontynuować zezwól na dostęp do Internetu.</string>
+    <string name="incorrect_email">Niepoprawny adres e-mail</string>
+    <string name="e_mail">E-mail</string>
 
     <string-array name="settings_entries">
        <item>Login</item>
         <item>Hasło</item>
+        <item>E-mail</item>
         <item>Dzielnica</item>
         <item>Ulica</item>
     </string-array>

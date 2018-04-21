@@ -58,4 +58,12 @@ public class FieldsValidator {
 
     }
 
+    public boolean isValidEmail(EditText email) {
+        if (!isValidField(email)) return false;
+        else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email.getText().toString()).matches()) {
+                email.setError(context.getString(R.string.incorrect_email));
+                return false;
+            } else return true;
+        }
+
 }
