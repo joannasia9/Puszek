@@ -1,19 +1,25 @@
 package com.puszek.jm.puszek;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.puszek.jm.puszek.asynctasks.SendUserDetails;
 import com.puszek.jm.puszek.helpers.FieldsValidator;
+import com.puszek.jm.puszek.models.APIClient;
+import com.puszek.jm.puszek.models.ApiInterface;
+import com.puszek.jm.puszek.models.User;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterUserActivity extends MyBaseActivity {
     EditText login;
@@ -91,19 +97,39 @@ public class RegisterUserActivity extends MyBaseActivity {
     }
 
     private void sendUserDataToServer(){
-        JSONObject postData = new JSONObject();
-        try {
-            postData.put("login", login.getText().toString().trim());
-            postData.put("email", email.getText().toString());
-            postData.put("password", password.getText().toString());
-            postData.put("district", district.getText().toString());
-            postData.put("street", street.getText().toString());
-            postData.put("number", hNumber.getText().toString());
-            SendUserDetails sendUserDetails = new SendUserDetails();
-            sendUserDetails.execute("https://afternoon-ridge-77405.herokuapp.com/api/v1/users/", postData.toString());
-            } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        User user = new User(login.getText().toString().trim(),email.getText().toString(),password.getText().toString(),
+                district.getText().toString(), street.getText().toString(),hNumber.getText().toString());
+
+        final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
+        final Call<User> registerUserCall = apiInterface.createUser(user);
+
+        registerUserCall.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+                if(response.code()!= 201){
+                    login.setError(getString(R.string.user_exists));
+                    login.requestFocus();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    assert imm != null;
+                    imm.showSoftInput(login, InputMethodManager.SHOW_IMPLICIT);
+                } else {
+                    Intent returnIntent = new Intent();
+                    returnIntent.putExtra("result",true);
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
+                }
+
+                Log.e("SERVER RESPONSE", response.toString());
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                call.cancel();
+            }
+        });
+
     }
 
 }

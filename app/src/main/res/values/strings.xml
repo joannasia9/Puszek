@@ -35,6 +35,8 @@
     <string name="internet_permission_required">Aby kontynuować zezwól na dostęp do Internetu.</string>
     <string name="incorrect_email">Niepoprawny adres e-mail</string>
     <string name="e_mail">E-mail</string>
+    <string name="user_exists">Użytkownik o podanym loginie istnieje</string>
+    <string name="registration_suceed">Zarejestrowano pomyślnie</string>
 
     <string-array name="settings_entries">
        <item>Login</item>
