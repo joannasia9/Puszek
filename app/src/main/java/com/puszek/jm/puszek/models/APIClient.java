@@ -6,14 +6,13 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
-    private static Retrofit retrofit = null;
+   private static Retrofit retrofit = null;
     private static String BASE_URL = "https://afternoon-ridge-77405.herokuapp.com";
 
     public static Retrofit getClient() {
-
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+        OkHttpClient  client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
 
         retrofit = new Retrofit.Builder()
@@ -24,4 +23,7 @@ public class APIClient {
 
         return retrofit;
     }
+
+
+
 }

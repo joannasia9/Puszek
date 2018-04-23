@@ -59,7 +59,6 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         mPreview = barcodeReadingFragment.findViewById(R.id.cameraPreview);
         mGraphicOverlay = barcodeReadingFragment.findViewById(R.id.graphicOverlay);
 
-        // Check for the camera permission before accessing the camera
         int rc = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
             createCameraSource();
@@ -190,6 +189,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     public void onBarcodeDetected(final Barcode barcode) {
         if (barcode!=null) {
             //barcode data received
+
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

@@ -14,8 +14,9 @@
     <color name="black">#000000</color>
     <color name="backgroundLight">#fbfbfb</color>
 
-    <color name="switchTrackActive">#41ebf4</color>
-    <color name="switchTrackNormal">#ba506b</color>
+    <color name="errorColor">#f44242</color>
+    <color name="warningColor">#f9dd04</color>
+    <color name="infoColor">#04b0f9</color>
 
 
 </resources>

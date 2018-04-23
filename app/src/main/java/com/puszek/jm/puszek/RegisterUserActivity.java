@@ -1,22 +1,23 @@
 package com.puszek.jm.puszek;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.puszek.jm.puszek.helpers.FieldsValidator;
 import com.puszek.jm.puszek.models.APIClient;
 import com.puszek.jm.puszek.models.ApiInterface;
+import com.puszek.jm.puszek.models.RegisteredUser;
 import com.puszek.jm.puszek.models.User;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,14 +64,15 @@ public class RegisterUserActivity extends MyBaseActivity {
         hNumber.setOnClickListener(animationListener);
         email.setOnClickListener(animationListener);
 
+        login.requestFocus();
+
     }
 
     public void registerUser(View view) {
         if(validator.isValidField(login)&&validator.isValidPassword(password,repeatedPassword)
                 && validator.isValidField(district) &&validator.isValidField(street)&&validator.isValidHouseNumber(hNumber)){
-            //register user at database
             clearAllAnimations();
-            sendUserDataToServer();
+            sendUserDataToServer(login, email, password, district, street, hNumber);
             System.out.println("Registered");
         }
     }
@@ -93,39 +95,37 @@ public class RegisterUserActivity extends MyBaseActivity {
         street.clearAnimation();
         hNumber.clearAnimation();
         district.clearAnimation();
-
     }
 
-    private void sendUserDataToServer(){
+    private void sendUserDataToServer(final EditText login, EditText email, EditText password, EditText district, EditText street, EditText hNumber){
         User user = new User(login.getText().toString().trim(),email.getText().toString(),password.getText().toString(),
                 district.getText().toString(), street.getText().toString(),hNumber.getText().toString());
 
         final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
-        final Call<User> registerUserCall = apiInterface.createUser(user);
 
-        registerUserCall.enqueue(new Callback<User>() {
+        final Call<RegisteredUser> registerUserCall = apiInterface.createUser(user);
+
+        registerUserCall.enqueue(new Callback<RegisteredUser>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-                if(response.code()!= 201){
+            public void onResponse(Call<RegisteredUser> call, Response<RegisteredUser> response) {
+                if(response.code() >= 300){
+                    Toasty.error(getApplicationContext(), getString(R.string.user_exists), Toast.LENGTH_SHORT, true).show();
                     login.setError(getString(R.string.user_exists));
                     login.requestFocus();
-                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    assert imm != null;
-                    imm.showSoftInput(login, InputMethodManager.SHOW_IMPLICIT);
+                    Log.e("REGISTERED USER ID", "onResponse: " + response.body().getId());
                 } else {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",true);
+
                     setResult(Activity.RESULT_OK,returnIntent);
                     finish();
                 }
 
                 Log.e("SERVER RESPONSE", response.toString());
-
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<RegisteredUser> call, Throwable t) {
                 call.cancel();
             }
         });

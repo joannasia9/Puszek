@@ -37,6 +37,10 @@
     <string name="e_mail">E-mail</string>
     <string name="user_exists">Użytkownik o podanym loginie istnieje</string>
     <string name="registration_suceed">Zarejestrowano pomyślnie</string>
+    <string name="preference_file_key">puszek_prefs</string>
+    <string name="access_token_id">access_token</string>
+    <string name="refresh_token_id">refresh_token</string>
+    <string name="wring_login_password">Błędny login lub hasło</string>
 
     <string-array name="settings_entries">
        <item>Login</item>

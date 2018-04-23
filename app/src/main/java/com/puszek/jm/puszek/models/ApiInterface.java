@@ -10,9 +10,12 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
     @POST("/api/v1/users/")
-    Call<User> createUser(@Body User user);
+    Call<RegisteredUser> createUser(@Body User user);
 
-    @GET("/auth/user")
-    Call<String> doGetUserList(@Query("user") String user);
+    @POST("/api/v1/auth/token/")
+    Call<AuthenticationRequestResult> authenticate(@Body AuthenticationRequest request);
+
+    @GET("/api/v1/auth/token/")
+    Call<String> getBarcode();
 
 }
