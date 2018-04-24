@@ -34,10 +34,17 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.puszek.jm.puszek.helpers.BarcodeGraphic;
 import com.puszek.jm.puszek.helpers.BarcodeGraphicTracker;
 import com.puszek.jm.puszek.helpers.BarcodeTrackerFactory;
+import com.puszek.jm.puszek.models.APIClient;
+import com.puszek.jm.puszek.models.ApiInterface;
+import com.puszek.jm.puszek.models.RequestedBarcodeData;
 import com.puszek.jm.puszek.ui.camera.CameraSourcePreview;
 import com.puszek.jm.puszek.ui.camera.GraphicOverlay;
 
 import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BarcodeReadingFragment extends android.support.v4.app.Fragment implements BarcodeGraphicTracker.BarcodeUpdateListener {
     private static final String TAG = "Barcode-reader";
@@ -188,14 +195,40 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     @Override
     public void onBarcodeDetected(final Barcode barcode) {
         if (barcode!=null) {
-            //barcode data received
 
-            getActivity().runOnUiThread(new Runnable() {
+            final Thread newThread = new Thread(){
                 @Override
                 public void run() {
-                    Toast.makeText(getContext(), barcode.displayValue, Toast.LENGTH_SHORT).show();
+                    final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
+                    String barcodeString = barcode.displayValue + "/";
+                    final Call<RequestedBarcodeData> requestBarcodeData = apiInterface.getBarcodeData(barcodeString);
+
+                    requestBarcodeData.enqueue(new Callback<RequestedBarcodeData>() {
+                        @Override
+                        public void onResponse(Call<RequestedBarcodeData> call, Response<RequestedBarcodeData> response) {
+
+                            final RequestedBarcodeData barcodeData = response.body();
+
+                            if (barcodeData != null)
+                                Log.e(TAG, "onResponse: " + response.body().getProduct().getProductName());
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), barcodeData.getProduct().getProductName(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<RequestedBarcodeData> call, Throwable t) {
+
+                        }
+                    });
                 }
-            });
+            };
+
+            newThread.start();
 
         }
     }

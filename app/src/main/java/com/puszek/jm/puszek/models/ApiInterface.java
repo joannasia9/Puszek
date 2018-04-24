@@ -5,6 +5,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiInterface {
@@ -15,7 +16,7 @@ public interface ApiInterface {
     @POST("/api/v1/auth/token/")
     Call<AuthenticationRequestResult> authenticate(@Body AuthenticationRequest request);
 
-    @GET("/api/v1/auth/token/")
-    Call<String> getBarcode();
+    @GET("/api/v1/barcodes/{code}/")
+    Call<RequestedBarcodeData> getBarcodeData(@Path("code") String barcodeCode);
 
 }

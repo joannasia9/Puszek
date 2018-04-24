@@ -17,6 +17,7 @@
         android:ems="10"
         android:hint="@string/login"
         android:inputType="textPersonName"
+        android:text="test123"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,13 +27,14 @@
 
     <EditText
         android:id="@+id/passwordEditText"
-        android:background="@drawable/circles"
         android:layout_width="0dp"
         android:layout_height="80dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/circles"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
+        android:text="test12"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@+id/loginEditText"
