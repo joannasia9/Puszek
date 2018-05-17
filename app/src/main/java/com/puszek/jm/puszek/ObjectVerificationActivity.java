@@ -48,7 +48,6 @@ public class ObjectVerificationActivity extends MyBaseActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

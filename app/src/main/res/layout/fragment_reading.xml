@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.puszek.jm.puszek.tensorflow.env.AutoFitTextureView
+    <com.puszek.jm.puszek.ui.camera.AutoFitTextureView
         android:id="@+id/cameraPreview"
         android:layout_width="350dp"
         android:layout_height="350dp"
@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.puszek.jm.puszek.tensorflow.env.AutoFitTextureView>
+    </com.puszek.jm.puszek.ui.camera.AutoFitTextureView>
 
     <View
         android:id="@+id/transparency"

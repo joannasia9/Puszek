@@ -1,4 +1,4 @@
-package com.puszek.jm.puszek.tensorflow.env;
+package com.puszek.jm.puszek.ui.camera;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,7 +7,7 @@ import android.view.TextureView;
 /**
  * A {@link TextureView} that can be adjusted to a specified aspect ratio.
  */
-public class AutoFitTextureView extends TextureView{
+public class AutoFitTextureView extends TextureView {
 
     private int mRatioDim = 0;
 
@@ -35,7 +35,7 @@ public class AutoFitTextureView extends TextureView{
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
+
         if (0 == mRatioDim) {
             setMeasuredDimension(width, width);
         } else {
