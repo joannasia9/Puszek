@@ -41,6 +41,8 @@
     <string name="access_token_id">access_token</string>
     <string name="refresh_token_id">refresh_token</string>
     <string name="wring_login_password">Błędny login lub hasło</string>
+    <string name="req_access">Wymagany dostęp do zdjęć i multimediów</string>
+    <string name="cam_not_supported">Kamera tego urządzenia nie jest wspierana</string>
 
     <string-array name="settings_entries">
        <item>Login</item>
@@ -49,7 +51,5 @@
         <item>Dzielnica</item>
         <item>Ulica</item>
     </string-array>
-
-
 
 </resources>

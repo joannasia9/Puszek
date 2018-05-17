@@ -54,7 +54,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginUser(View view) {
-        startActivity(new Intent(getApplicationContext(),LoginUserActivity.class));
+        //startActivity(new Intent(getApplicationContext(),LoginUserActivity.class));
+        startActivity(new Intent(getApplicationContext(),MainMenuActivity.class));
     }
 
     public void goToRegistrationPanel(View view) {

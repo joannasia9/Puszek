@@ -1,28 +1,17 @@
 package com.puszek.jm.puszek;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,6 +28,7 @@ import com.puszek.jm.puszek.models.ApiInterface;
 import com.puszek.jm.puszek.models.RequestedBarcodeData;
 import com.puszek.jm.puszek.ui.camera.CameraSourcePreview;
 import com.puszek.jm.puszek.ui.camera.GraphicOverlay;
+import com.puszek.jm.puszek.utils.PermissionManager;
 
 import java.io.IOException;
 
@@ -48,13 +38,11 @@ import retrofit2.Response;
 
 public class BarcodeReadingFragment extends android.support.v4.app.Fragment implements BarcodeGraphicTracker.BarcodeUpdateListener {
     private static final String TAG = "Barcode-reader";
-    private static final int RC_HANDLE_GMS = 9001;
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
+
 
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-    final String[] permissions = new String[]{Manifest.permission.CAMERA};
 
     View barcodeReadingFragment;
 
@@ -66,26 +54,16 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         mPreview = barcodeReadingFragment.findViewById(R.id.cameraPreview);
         mGraphicOverlay = barcodeReadingFragment.findViewById(R.id.graphicOverlay);
 
-        int rc = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
+        if (PermissionManager.hasCamPermission(getActivity())) {
             createCameraSource();
         } else {
-            requestCameraPermission();
+            PermissionManager.requestCamPermission(getActivity());
         }
 
         return barcodeReadingFragment;
     }
 
-    private void requestCameraPermission() {
-        Log.w(TAG, "Camera permission is not granted. Requesting permission");
 
-        if (!ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                Manifest.permission.CAMERA)) {
-            ActivityCompat.requestPermissions(getActivity(), permissions, RC_HANDLE_CAMERA_PERM);
-        }
-    }
-
-    @SuppressLint("InlinedApi")
     private void createCameraSource() {
         Context context = getContext();
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context)
@@ -144,40 +122,15 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode != RC_HANDLE_CAMERA_PERM) {
-            Log.d(TAG, "Got unexpected permission result: " + requestCode);
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            return;
-        }
-
-        if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Camera permission granted - initialize the camera source");
-            createCameraSource();
-            return;
-        }
-
-        Log.e(TAG, "Permission not granted: results len = " + grantResults.length +
-                " Result code = " + (grantResults.length > 0 ? grantResults[0] : "(empty)"));
-
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                getActivity().finish();
-            }
-        };
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(R.string.puszek)
-                .setMessage(R.string.no_camera_permission)
-                .setPositiveButton(R.string.okay, listener)
-                .show();
+            if (PermissionManager.managedCamPermissions(requestCode,grantResults)) startCameraSource();
     }
 
 
-    private void startCameraSource() throws SecurityException {
+    private  void startCameraSource() throws SecurityException {
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getContext());
         if (code != ConnectionResult.SUCCESS) {
-            Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), code, RC_HANDLE_GMS);
+            Dialog dlg = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), code, PermissionManager.RC_HANDLE_GMS);
             dlg.show();
         }
 

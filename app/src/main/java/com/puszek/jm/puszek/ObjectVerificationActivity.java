@@ -14,6 +14,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.puszek.jm.puszek.utils.PermissionManager;
+
 public class ObjectVerificationActivity extends MyBaseActivity {
     Switch mSwitch;
     TextView verificationOptionTitle;
@@ -55,15 +57,19 @@ public class ObjectVerificationActivity extends MyBaseActivity {
 
         mSwitch = findViewById(R.id.modeSwitch);
         verificationOptionTitle = findViewById(R.id.verificationOptionTitle);
+
+        if(PermissionManager.hasCamPermission(this))
         scanProductActionPerform();
 
         mSwitch.setOnCheckedChangeListener(switchListener);
 
-        CheckBox checkBox = findViewById(R.id.useFlashCheckbox);
+        checkBox = findViewById(R.id.useFlashCheckbox);
 
         if(isFlashAvailable()) checkBox.setOnCheckedChangeListener(checkBoxListener);
-        else checkBox.setAlpha((float) 0.2);
-
+        else {
+            checkBox.setAlpha((float) 0.2);
+            checkBox.setClickable(false);
+        }
     }
 
     public void scanBarcodeActionPerform() {
