@@ -44,6 +44,7 @@
     <string name="req_access">Wymagany dostęp do zdjęć i multimediów</string>
     <string name="cam_not_supported">Kamera tego urządzenia nie jest wspierana</string>
     <string name="err">Błąd</string>
+    <string name="no_result">Brak obiektu w bazie</string>
 
     <string-array name="settings_entries">
        <item>Login</item>

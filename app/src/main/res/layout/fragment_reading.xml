@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.puszek.jm.puszek.ui.camera.AutoFitTextureView
+    <com.puszek.jm.puszek.tf.AutoFitTextureView
         android:id="@+id/cameraPreview"
         android:layout_width="350dp"
         android:layout_height="350dp"
@@ -18,8 +18,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-    </com.puszek.jm.puszek.ui.camera.AutoFitTextureView>
+    </com.puszek.jm.puszek.tf.AutoFitTextureView>
 
+    <com.puszek.jm.puszek.tf.OverlayView
+        android:id="@+id/overlayView"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
     <View
         android:id="@+id/transparency"
         android:layout_width="360dp"

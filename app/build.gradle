@@ -21,6 +21,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['jniLibs', 'src/main/jniLibs']
+        }
+    }
     buildToolsVersion '27.0.3'
 }
 

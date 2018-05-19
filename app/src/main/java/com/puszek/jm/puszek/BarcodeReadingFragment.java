@@ -1,6 +1,6 @@
 package com.puszek.jm.puszek;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +32,7 @@ import com.puszek.jm.puszek.utils.PermissionManager;
 
 import java.io.IOException;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -160,22 +161,18 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
                         @Override
                         public void onResponse(Call<RequestedBarcodeData> call, Response<RequestedBarcodeData> response) {
 
+                            Log.e("BARCODE_READING","Barcode read");
                             final RequestedBarcodeData barcodeData = response.body();
 
-                            if (barcodeData != null)
+                            if (barcodeData != null){
                                 Log.e(TAG, "onResponse: " + response.body().getProduct().getProductName());
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(getActivity(), barcodeData.getProduct().getProductName(), Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
+                            runOnUiThreadToast(getActivity(), barcodeData.getProduct().getProductName());
+                            } else runOnUiThreadToast(getActivity(),getActivity().getString(R.string.no_result));
                         }
 
                         @Override
                         public void onFailure(Call<RequestedBarcodeData> call, Throwable t) {
-
+                            runOnUiThreadToast(getActivity(), t.getMessage());
                         }
                     });
                 }
@@ -186,5 +183,12 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         }
     }
 
-
+private void runOnUiThreadToast(Activity activity,final String message){
+    activity.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            Toasty.info(getActivity(),message).show();
+        }
+    });
+}
 }

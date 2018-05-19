@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.puszek.jm.puszek.adapters.MainMenuAdapter;
+import com.puszek.jm.puszek.tf.DetectorActivity;
 import com.puszek.jm.puszek.utils.PermissionResultCallback;
 import com.puszek.jm.puszek.utils.PermissionUtils;
 
@@ -37,12 +38,9 @@ public class MainMenuActivity extends MyBaseActivity implements PermissionResult
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
-                        startActivity(new Intent(getApplicationContext(), ObjectVerificationActivity.class));
+                        startActivity(new Intent(getApplicationContext(), DetectorActivity.class)); //////////
                         break;
                     case 1:
-                        startActivity(new Intent(getApplicationContext(), ObjectAdditionActivity.class));
-                        break;
-                    case 2:
                         startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
                         break;
                 }
