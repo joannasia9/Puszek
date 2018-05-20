@@ -9,7 +9,7 @@ import es.dmoral.toasty.Toasty;
 public class PermissionManager {
 
     private static final String TAG = "PermissionsManager";
-    private static final int RC_HANDLE_CAMERA_PERM = 2;
+    public static final int RC_HANDLE_CAMERA_PERM = 2;
     public static final int RC_HANDLE_GMS = 9001;
 
     public static boolean hasCamPermission(Activity activity) {

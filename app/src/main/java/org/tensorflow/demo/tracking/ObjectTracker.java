@@ -23,7 +23,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 
-import com.puszek.jm.puszek.tf.env.Size;
+import org.tensorflow.demo.env.Size;
 
 import java.util.ArrayList;
 import java.util.HashMap;

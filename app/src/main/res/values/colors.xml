@@ -9,7 +9,8 @@
     <color name="colorPrimaryGreen">#6db556</color>
     <color name="buttonGreenEnd">#c4ee9b</color>
     <color name="buttonGreenCenter">#8cd93b</color>
-    <color name="switchGreenActive">#a7f259</color>
+    <color name="switchYellowActive">#fff827</color>
+    <color name="switchYellowDisabled">#fffb7b</color>
     <color name="buttonGreenStart">#6ac310</color>
     <color name="black">#000000</color>
     <color name="backgroundLight">#fbfbfb</color>

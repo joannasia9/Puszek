@@ -45,6 +45,8 @@
     <string name="cam_not_supported">Kamera tego urządzenia nie jest wspierana</string>
     <string name="err">Błąd</string>
     <string name="no_result">Brak obiektu w bazie</string>
+    <string name="scan_bar">Skanuj barcode</string>
+    <string name="scan_box">Skanuj opakowanie</string>
 
     <string-array name="settings_entries">
        <item>Login</item>

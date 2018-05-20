@@ -44,6 +44,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
+    private Activity activity;
 
     View barcodeReadingFragment;
 
@@ -52,6 +53,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         barcodeReadingFragment = inflater.inflate(R.layout.fragment_barcode_reading, container, false);
 
+        activity = getActivity();
         mPreview = barcodeReadingFragment.findViewById(R.id.cameraPreview);
         mGraphicOverlay = barcodeReadingFragment.findViewById(R.id.graphicOverlay);
 
@@ -166,13 +168,13 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
 
                             if (barcodeData != null){
                                 Log.e(TAG, "onResponse: " + response.body().getProduct().getProductName());
-                            runOnUiThreadToast(getActivity(), barcodeData.getProduct().getProductName());
-                            } else runOnUiThreadToast(getActivity(),getActivity().getString(R.string.no_result));
+                            runOnUiThreadToast(barcodeData.getProduct().getProductName());
+                            } else runOnUiThreadToast(getActivity().getString(R.string.no_result));
                         }
 
                         @Override
                         public void onFailure(Call<RequestedBarcodeData> call, Throwable t) {
-                            runOnUiThreadToast(getActivity(), t.getMessage());
+                            runOnUiThreadToast(t.getMessage());
                         }
                     });
                 }
@@ -183,11 +185,11 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         }
     }
 
-private void runOnUiThreadToast(Activity activity,final String message){
+private void runOnUiThreadToast(final String message){
     activity.runOnUiThread(new Runnable() {
         @Override
         public void run() {
-            Toasty.info(getActivity(),message).show();
+            Toasty.info(activity,message).show();
         }
     });
 }

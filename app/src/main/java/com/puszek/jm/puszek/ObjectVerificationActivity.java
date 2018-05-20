@@ -1,126 +1,185 @@
 package com.puszek.jm.puszek;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.media.ImageReader;
+import android.os.SystemClock;
+import android.util.Log;
+import android.util.Size;
+import android.util.TypedValue;
 
-import com.puszek.jm.puszek.utils.PermissionManager;
+import com.puszek.jm.puszek.tf.CameraActivity;
+import com.puszek.jm.puszek.tf.Classifier;
+import com.puszek.jm.puszek.tf.OverlayView;
+import com.puszek.jm.puszek.tf.TensorflowImageClassifier;
+import org.tensorflow.demo.env.BorderedText;
+import org.tensorflow.demo.env.ImageUtils;
+import org.tensorflow.demo.env.Logger;
 
-public class ObjectVerificationActivity extends MyBaseActivity {
-    Switch mSwitch;
-    TextView verificationOptionTitle;
-    CheckBox checkBox;
-    Fragment fragment;
+import java.util.List;
+import java.util.Vector;
 
-    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                scanBarcodeActionPerform();
-                Toast.makeText(ObjectVerificationActivity.this,
-                        "Switch On", Toast.LENGTH_SHORT).show();
-                mSwitch.setThumbResource(R.drawable.barcode);
-            } else {
-                Toast.makeText(ObjectVerificationActivity.this, "Switch Off", Toast.LENGTH_SHORT).show();
-                scanProductActionPerform();
-                mSwitch.setThumbResource(R.drawable.box);
-            }
-        }
-    };
+public class ObjectVerificationActivity extends CameraActivity implements ImageReader.OnImageAvailableListener {
+    private static final Logger LOGGER = new Logger();
 
-    CompoundButton.OnCheckedChangeListener checkBoxListener = new CompoundButton.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if(isChecked){
-                //flashLightOn();
-            } else {
-                // flashLightOff();
-            }
-        }
-    };
+    protected static final boolean SAVE_PREVIEW_BITMAP = false;
+
+    private Bitmap rgbFrameBitmap = null;
+    private Bitmap croppedBitmap = null;
+    private Bitmap cropCopyBitmap = null;
+
+    private long lastProcessingTimeMs;
+
+    private static final int INPUT_SIZE = 224;
+    private static final int IMAGE_MEAN = 128;
+    private static final float IMAGE_STD = 128;
+    private static final String INPUT_NAME = "Placeholder";
+    private static final String OUTPUT_NAME = "final_result";
+
+
+    private static final String MODEL_FILE = "file:///android_asset/output_graph.pb";
+    private static final String LABEL_FILE = "file:///android_asset/output_labels.txt";
+
+
+    private static final boolean MAINTAIN_ASPECT = true;
+
+    private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
+
+
+    private Integer sensorOrientation;
+    private Classifier classifier;
+    private Matrix frameToCropTransform;
+    private Matrix cropToFrameTransform;
+
+
+    private BorderedText borderedText;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_object_verification);
+    protected int getLayoutId() {
+        return R.layout.fragment_reading;
+    }
 
+    @Override
+    protected Size getDesiredPreviewFrameSize() {
+        return DESIRED_PREVIEW_SIZE;
+    }
 
-        mSwitch = findViewById(R.id.modeSwitch);
-        verificationOptionTitle = findViewById(R.id.verificationOptionTitle);
+    private static final float TEXT_SIZE_DIP = 10;
 
-        if(PermissionManager.hasCamPermission(this))
-        scanProductActionPerform();
+    @Override
+    public void onPreviewSizeChosen(final Size size, final int rotation) {
+        final float textSizePx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, TEXT_SIZE_DIP, getResources().getDisplayMetrics());
+        borderedText = new BorderedText(textSizePx);
+        borderedText.setTypeface(Typeface.MONOSPACE);
 
-        mSwitch.setOnCheckedChangeListener(switchListener);
+        classifier =
+                TensorflowImageClassifier.create(
+                        getAssets(),
+                        MODEL_FILE,
+                        LABEL_FILE,
+                        INPUT_SIZE,
+                        IMAGE_MEAN,
+                        IMAGE_STD,
+                        INPUT_NAME,
+                        OUTPUT_NAME);
 
-        checkBox = findViewById(R.id.useFlashCheckbox);
+        previewWidth = size.getWidth();
+        previewHeight = size.getHeight();
 
-        if(isFlashAvailable()) checkBox.setOnCheckedChangeListener(checkBoxListener);
-        else {
-            checkBox.setAlpha((float) 0.2);
-            checkBox.setClickable(false);
+        sensorOrientation = rotation - getScreenOrientation();
+        LOGGER.i("Camera orientation relative to screen canvas: %d", sensorOrientation);
+
+        LOGGER.i("Initializing at size %dx%d", previewWidth, previewHeight);
+        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Config.ARGB_8888);
+        croppedBitmap = Bitmap.createBitmap(INPUT_SIZE, INPUT_SIZE, Config.ARGB_8888);
+
+        frameToCropTransform = ImageUtils.getTransformationMatrix(
+                previewWidth, previewHeight,
+                INPUT_SIZE, INPUT_SIZE,
+                sensorOrientation, MAINTAIN_ASPECT);
+
+        cropToFrameTransform = new Matrix();
+        frameToCropTransform.invert(cropToFrameTransform);
+
+        addCallback(
+                new OverlayView.DrawCallback() {
+                    @Override
+                    public void drawCallback(final Canvas canvas) {
+                        renderDebug(canvas);
+                    }
+                });
+    }
+
+    @Override
+    protected void processImage() {
+        rgbFrameBitmap.setPixels(getRgbBytes(), 0, previewWidth, 0, 0, previewWidth, previewHeight);
+        final Canvas canvas = new Canvas(croppedBitmap);
+        canvas.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+
+        // For examining the actual TF input.
+        if (SAVE_PREVIEW_BITMAP) {
+            ImageUtils.saveBitmap(croppedBitmap);
         }
+        runInBackground(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        final long startTime = SystemClock.uptimeMillis();
+                        final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
+                        lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
+                        LOGGER.i("Detect: %s", results);
+                        cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+
+                        if(results.size()!= 0)
+                        Log.e("OBJECT DETECTED", results.get(0).getTitle() );
+
+                        requestRender();
+                        readyForNextImage();
+                    }
+                });
     }
 
-    public void scanBarcodeActionPerform() {
-        String optionTitle = getString(R.string.scan) + "\n" + getString(R.string.barcode);
-        verificationOptionTitle.setText(optionTitle);
-        fragment = new BarcodeReadingFragment();
-        replaceFragmentContent();
+    @Override
+    public void onSetDebug(boolean debug) {
+        classifier.enableStatLogging(debug);
     }
 
-    public void scanProductActionPerform(){
-        String optionTitle = getString(R.string.scan) + "\n" + getString(R.string.packageStr);
-        verificationOptionTitle.setText(optionTitle);
-        fragment = new BoxReadingFragment();
-        replaceFragmentContent();
-    }
-
-    private void replaceFragmentContent(){
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.readingContent, fragment).commit();
-    }
-
-    private boolean isFlashAvailable(){
-        boolean isAvailable = this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-        if(!isAvailable){
-            Toast.makeText(this, R.string.flash_unavailable,Toast.LENGTH_LONG).show();
+    private void renderDebug(final Canvas canvas) {
+        if (!isDebug()) {
+            return;
         }
-        return isAvailable;
-    }
+        final Bitmap copy = cropCopyBitmap;
+        if (copy != null) {
+            final Matrix matrix = new Matrix();
+            final float scaleFactor = 2;
+            matrix.postScale(scaleFactor, scaleFactor);
+            matrix.postTranslate(
+                    canvas.getWidth() - copy.getWidth() * scaleFactor,
+                    canvas.getHeight() - copy.getHeight() * scaleFactor);
+            canvas.drawBitmap(copy, matrix, new Paint());
 
-    CameraManager camManager;
-    String cameraId;
-    public void flashLightOn() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
-            try {
-                assert camManager != null;
-                cameraId = camManager.getCameraIdList()[0];
-                camManager.setTorchMode(cameraId, true);   //Turn ON flash
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
+            final Vector<String> lines = new Vector<String>();
+            if (classifier != null) {
+                String statString = classifier.getStatString();
+                String[] statLines = statString.split("\n");
+                for (String line : statLines) {
+                    lines.add(line);
+                }
             }
+
+            lines.add("Frame: " + previewWidth + "x" + previewHeight);
+            lines.add("Crop: " + copy.getWidth() + "x" + copy.getHeight());
+            lines.add("View: " + canvas.getWidth() + "x" + canvas.getHeight());
+            lines.add("Rotation: " + sensorOrientation);
+            lines.add("Inference time: " + lastProcessingTimeMs + "ms");
+
+            borderedText.drawLines(canvas, 10, canvas.getHeight() - 10, lines);
         }
     }
-
-    public void flashLightOff() {
-        try {
-            camManager.setTorchMode(cameraId, false);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
 }

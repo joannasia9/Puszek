@@ -26,7 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         Toasty.Config.getInstance()
                 .setErrorColor(getColor(R.color.errorColor))
                 .setInfoColor(getColor(R.color.infoColor))
-                .setSuccessColor(getColor(R.color.switchGreenActive))
+                .setSuccessColor(getColor(R.color.buttonGreenCenter))
                 .setWarningColor(getColor(R.color.warningColor))
                 .setTextColor(getColor(R.color.backgroundLight))
                 .tintIcon(true)
