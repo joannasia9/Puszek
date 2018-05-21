@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.puszek.jm.puszek.tf;
+package com.puszek.jm.puszek.ui.camera;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -46,8 +46,8 @@ import com.puszek.jm.puszek.MyBaseActivity;
 import com.puszek.jm.puszek.R;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
-import com.puszek.jm.puszek.ui.camera.CameraConnectionFragment;
-import com.puszek.jm.puszek.ui.camera.LegacyCameraConnectionFragment;
+
+import com.puszek.jm.puszek.tf.OverlayView;
 import com.puszek.jm.puszek.utils.PermissionManager;
 
 import java.nio.ByteBuffer;
@@ -96,8 +96,8 @@ public abstract class CameraActivity extends MyBaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_object_verification);
 
-        cameraId = chooseCamera();
         if (PermissionManager.hasCamPermission(this)) {
+            cameraId = chooseCamera();
             setFragment();
         } else {
             PermissionManager.requestCamPermission(this);
@@ -111,8 +111,6 @@ public abstract class CameraActivity extends MyBaseActivity
         String optionTitle = getString(R.string.scan) + "\n" + getString(R.string.packageStr);
 
         verificationOptionTitle.setText(optionTitle);
-
-
 
         mSwitch.setOnCheckedChangeListener(switchListener);
 
@@ -180,7 +178,7 @@ public abstract class CameraActivity extends MyBaseActivity
                     }
                 };
         processImage();
-    }
+}
 
     /**
      * Callback for Camera2 API
@@ -253,7 +251,6 @@ public abstract class CameraActivity extends MyBaseActivity
         LOGGER.d("onStart " + this);
         super.onStart();
     }
-
     @Override
     public synchronized void onResume() {
         LOGGER.d("onResume " + this);
@@ -262,6 +259,7 @@ public abstract class CameraActivity extends MyBaseActivity
         handlerThread = new HandlerThread("inference");
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
+
     }
 
     @Override

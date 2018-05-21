@@ -9,6 +9,8 @@ public class WasteType {
     private ShortCodes shortCode;
     @SerializedName("color")
     private TypeColours typeColour;
+    @SerializedName("scheduled_disposals")
+    private String[] scheduledDisposals;
 
     public int getTypeId() {
         return typeId;
@@ -20,5 +22,9 @@ public class WasteType {
 
     public TypeColours getTypeColour() {
         return typeColour;
+    }
+
+    public String[] getScheduledDisposals() {
+        return scheduledDisposals;
     }
 }

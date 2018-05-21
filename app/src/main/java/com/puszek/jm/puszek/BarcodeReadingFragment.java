@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -23,14 +31,20 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.puszek.jm.puszek.helpers.BarcodeGraphic;
 import com.puszek.jm.puszek.helpers.BarcodeGraphicTracker;
 import com.puszek.jm.puszek.helpers.BarcodeTrackerFactory;
+import com.puszek.jm.puszek.helpers.DialogManager;
+import com.puszek.jm.puszek.helpers.FieldsValidator;
 import com.puszek.jm.puszek.models.APIClient;
 import com.puszek.jm.puszek.models.ApiInterface;
+import com.puszek.jm.puszek.models.BarcodeToAdd;
 import com.puszek.jm.puszek.models.RequestedBarcodeData;
+import com.puszek.jm.puszek.models.WasteType;
 import com.puszek.jm.puszek.ui.camera.CameraSourcePreview;
 import com.puszek.jm.puszek.ui.camera.GraphicOverlay;
 import com.puszek.jm.puszek.utils.PermissionManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -45,8 +59,11 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
     private Activity activity;
+    private DialogManager dialogManager;
+    private ArrayList<String> spinnerArray;
 
-    View barcodeReadingFragment;
+            View barcodeReadingFragment;
+    private SharedPreferences puszekPrefs;
 
     @Nullable
     @Override
@@ -54,6 +71,13 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         barcodeReadingFragment = inflater.inflate(R.layout.fragment_barcode_reading, container, false);
 
         activity = getActivity();
+
+        spinnerArray = new ArrayList<>();
+
+        String[] spinnerItems = activity.getResources().getStringArray(R.array.waste_bar_types);
+        spinnerArray.addAll(Arrays.asList(spinnerItems));
+
+        dialogManager = new DialogManager(activity);
         mPreview = barcodeReadingFragment.findViewById(R.id.cameraPreview);
         mGraphicOverlay = barcodeReadingFragment.findViewById(R.id.graphicOverlay);
 
@@ -62,6 +86,9 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         } else {
             PermissionManager.requestCamPermission(getActivity());
         }
+
+        puszekPrefs = activity.getSharedPreferences(
+                getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
         return barcodeReadingFragment;
     }
@@ -129,7 +156,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     }
 
 
-    private  void startCameraSource() throws SecurityException {
+    private void startCameraSource() throws SecurityException {
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getContext());
         if (code != ConnectionResult.SUCCESS) {
@@ -148,16 +175,21 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         }
     }
 
+    String detectedBarcodeValue ="";
+
     @Override
     public void onBarcodeDetected(final Barcode barcode) {
-        if (barcode!=null) {
-
+        if (barcode != null) {
             final Thread newThread = new Thread(){
                 @Override
                 public void run() {
                     final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
+                    detectedBarcodeValue = barcode.displayValue;
                     String barcodeString = barcode.displayValue + "/";
-                    final Call<RequestedBarcodeData> requestBarcodeData = apiInterface.getBarcodeData(barcodeString);
+                    String accessToken = "Bearer "+ puszekPrefs.getString("access_token","");
+
+
+                    final Call<RequestedBarcodeData> requestBarcodeData = apiInterface.getBarcodeData(barcodeString,accessToken);
 
                     requestBarcodeData.enqueue(new Callback<RequestedBarcodeData>() {
                         @Override
@@ -168,8 +200,18 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
 
                             if (barcodeData != null){
                                 Log.e(TAG, "onResponse: " + response.body().getProduct().getProductName());
-                            runOnUiThreadToast(barcodeData.getProduct().getProductName());
-                            } else runOnUiThreadToast(getActivity().getString(R.string.no_result));
+                                if(dialogManager.getDialog() != null) {
+                                    if (!dialogManager.getDialog().isShowing())
+                                        runOnUiDialog(barcodeData);
+                                } else runOnUiDialog(barcodeData);
+                            } else {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showAddBarcodeToDbDialog(detectedBarcodeValue);
+                                    }
+                                });
+                            }
                         }
 
                         @Override
@@ -185,6 +227,126 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         }
     }
 
+    private void runOnUiThreadErrorToast(final String message){
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toasty.info(activity,message).show();
+            }
+        });
+    }
+
+    BarcodeToAdd barcodeToAdd;
+    int wasteType = 8;
+
+    private void showAddBarcodeToDbDialog(final String detectedBarcode){
+        final TextView barcodeValue;
+        final EditText productName;
+        final Spinner wasteTypeSpinner;
+        Button saveButton, cancelButton;
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_add_barcode);
+
+        barcodeValue = dialog.findViewById(R.id.bacodeValue);
+        String title = getActivity().getString(R.string.value) + " " + detectedBarcode;
+        barcodeValue.setText(title);
+
+        productName = dialog.findViewById(R.id.productName);
+        wasteTypeSpinner = dialog.findViewById(R.id.wasteTypeSpinner);
+
+        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_dropdown_item,
+                spinnerArray);
+        wasteTypeSpinner.setAdapter(spinnerArrayAdapter);
+
+        wasteTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        wasteType = 8;
+                        break;
+                    case 1:
+                        wasteType = 7;
+                        break;
+                    case 2:
+                        wasteType = 9;
+                        break;
+                    case 3:
+                        wasteType = 2;
+                        break;
+                    case 4:
+                        wasteType = 4;
+                        break;
+                    case 5:
+                        wasteType = 5;
+                        break;
+                     default:
+                         wasteType = 8;
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        cancelButton = dialog.findViewById(R.id.cancelButton);
+        saveButton = dialog.findViewById(R.id.saveButton);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FieldsValidator validator = new FieldsValidator(getActivity());
+                if(validator.isValidField(productName)){
+                  barcodeToAdd = new BarcodeToAdd();
+                  barcodeToAdd.setCode(detectedBarcode);
+                  barcodeToAdd.setProductName(productName.getText().toString().trim());
+                  barcodeToAdd.setWasteType(wasteType);
+                  addBarcodeToDb(barcodeToAdd);
+                  dialog.cancel();
+                } else dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
+
+    private void addBarcodeToDb(final BarcodeToAdd barcode){
+        final Thread newThread = new Thread(){
+            @Override
+            public void run() {
+                final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
+
+                final Call<RequestedBarcodeData> addBarcodeData = apiInterface.addBarcode(barcode);
+
+                addBarcodeData.enqueue(new Callback<RequestedBarcodeData>() {
+                    @Override
+                    public void onResponse(Call<RequestedBarcodeData> call, Response<RequestedBarcodeData> response) {
+                        runOnUiThreadToast(getActivity().getString(R.string.saved_succ));
+                    }
+
+                    @Override
+                    public void onFailure(Call<RequestedBarcodeData> call, Throwable t) {
+                        runOnUiThreadErrorToast(getActivity().getString(R.string.saving_error));
+                    }
+                });
+            }
+        };
+
+        newThread.start();
+    }
+
 private void runOnUiThreadToast(final String message){
     activity.runOnUiThread(new Runnable() {
         @Override
@@ -193,4 +355,14 @@ private void runOnUiThreadToast(final String message){
         }
     });
 }
+
+private void runOnUiDialog(final RequestedBarcodeData barcodeData){
+    activity.runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+            dialogManager.showBarcodeDetectedDialog(barcodeData);
+        }
+    });
+}
+
 }

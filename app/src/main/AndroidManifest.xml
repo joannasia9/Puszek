@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.puszek.jm.puszek"
-    tools:ignore="ImpliedTouchscreenHardware,MissingLeanbackSupport">
+    tools:ignore="ImpliedTouchscreenHardware,MissingLeanbackSupport"
+    android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera"/>

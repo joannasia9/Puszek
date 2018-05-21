@@ -15,9 +15,14 @@
     <color name="black">#000000</color>
     <color name="backgroundLight">#fbfbfb</color>
 
-    <color name="errorColor">#f44242</color>
-    <color name="warningColor">#f9dd04</color>
-    <color name="infoColor">#04b0f9</color>
+    <color name="redColor">#f44242</color>
+    <color name="yellowColor">#f9dd04</color>
+    <color name="blueColor">#04b0f9</color>
+    <color name="brownColor">#990000</color>
+
+    <color name="yellowStart">#fff700</color>
+    <color name="yellowCenter">#fffb82</color>
+    <color name="yellowEnd">#fffcad</color>
 
 
 </resources>

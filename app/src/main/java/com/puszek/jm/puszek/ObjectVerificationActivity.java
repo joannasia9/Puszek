@@ -1,5 +1,7 @@
 package com.puszek.jm.puszek;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -7,12 +9,18 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.media.ImageReader;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Size;
 import android.util.TypedValue;
 
-import com.puszek.jm.puszek.tf.CameraActivity;
+import com.puszek.jm.puszek.helpers.DialogManager;
+import com.puszek.jm.puszek.models.APIClient;
+import com.puszek.jm.puszek.models.ApiInterface;
+import com.puszek.jm.puszek.models.RequestedBarcodeData;
+import com.puszek.jm.puszek.models.WasteType;
+import com.puszek.jm.puszek.ui.camera.CameraActivity;
 import com.puszek.jm.puszek.tf.Classifier;
 import com.puszek.jm.puszek.tf.OverlayView;
 import com.puszek.jm.puszek.tf.TensorflowImageClassifier;
@@ -22,6 +30,10 @@ import org.tensorflow.demo.env.Logger;
 
 import java.util.List;
 import java.util.Vector;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ObjectVerificationActivity extends CameraActivity implements ImageReader.OnImageAvailableListener {
     private static final Logger LOGGER = new Logger();
@@ -40,24 +52,27 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
     private static final String INPUT_NAME = "Placeholder";
     private static final String OUTPUT_NAME = "final_result";
 
-
     private static final String MODEL_FILE = "file:///android_asset/output_graph.pb";
     private static final String LABEL_FILE = "file:///android_asset/output_labels.txt";
-
 
     private static final boolean MAINTAIN_ASPECT = true;
 
     private static final Size DESIRED_PREVIEW_SIZE = new Size(640, 480);
-
 
     private Integer sensorOrientation;
     private Classifier classifier;
     private Matrix frameToCropTransform;
     private Matrix cropToFrameTransform;
 
-
     private BorderedText borderedText;
+    private DialogManager dialogManager;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dialogManager = new DialogManager(this);
+        requestWasteTypes();
+    }
 
     @Override
     protected int getLayoutId() {
@@ -134,15 +149,61 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
                         final List<Classifier.Recognition> results = classifier.recognizeImage(croppedBitmap);
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
                         LOGGER.i("Detect: %s", results);
-                        cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
 
-                        if(results.size()!= 0)
-                        Log.e("OBJECT DETECTED", results.get(0).getTitle() );
+                        if (isActivityActive && results.size() != 0) {
+                            Log.i("OBJECT DETECTED", results.get(0).getTitle());
+                            if (dialogManager.getDialog() != null) {
+                                if (!dialogManager.getDialog().isShowing()) {
+                                    runOnUiDialog(results.get(0).getTitle());
+                                }
+                            } else {
+                                runOnUiDialog(results.get(0).getTitle());
+                            }
+                        }
 
-                        requestRender();
-                        readyForNextImage();
+                        if(isActivityActive) {
+                            cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
+                            requestRender();
+                            readyForNextImage();
+                        }
+
                     }
                 });
+    }
+
+ Boolean isActivityActive = true;
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        isActivityActive = false;
+        if(dialogManager.getDialog()!=null){
+            if (dialogManager.getDialog().isShowing()) dialogManager.getDialog().dismiss();
+        }
+    }
+
+    @Override
+    public synchronized void onPause() {
+        super.onPause();
+        isActivityActive = false;
+        if(dialogManager.getDialog() != null) dialogManager.getDialog().dismiss();
+    }
+
+    @Override
+    public synchronized void onStop() {
+        super.onStop();
+        isActivityActive = false;
+        if(dialogManager.getDialog() != null) dialogManager.getDialog().dismiss();
+    }
+
+    private void runOnUiDialog(final String results){
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialogManager = new DialogManager(ObjectVerificationActivity.this);
+                dialogManager.showBoxDetectedDialog(results,wasteTypes);
+            }
+        });
     }
 
     @Override
@@ -181,5 +242,36 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
 
             borderedText.drawLines(canvas, 10, canvas.getHeight() - 10, lines);
         }
+    }
+
+    WasteType[] wasteTypes = null;
+
+    private void requestWasteTypes(){
+        final Thread newThread = new Thread(){
+            @Override
+            public void run() {
+                final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
+                SharedPreferences puszekPrefs = getApplicationContext().getSharedPreferences(
+                        getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                String accessToken = "Bearer "+ puszekPrefs.getString("access_token","");
+
+                final Call<WasteType[]> requestWasteType = apiInterface.getWasteTypes(accessToken);
+
+                requestWasteType.enqueue(new Callback<WasteType[]>() {
+                    @Override
+                    public void onResponse(Call<WasteType[]> call, Response<WasteType[]> response) {
+                        wasteTypes = response.body();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<WasteType[]> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+            }
+        };
+
+        newThread.start();
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.puszek.jm.puszek.models.APIClient;
 import com.puszek.jm.puszek.models.ApiInterface;
 import com.puszek.jm.puszek.models.AuthenticationRequest;
 import com.puszek.jm.puszek.models.AuthenticationRequestResult;
+import com.puszek.jm.puszek.utils.PermissionManager;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -50,7 +52,7 @@ public class LoginUserActivity extends MyBaseActivity {
         Animation iconAnimation = AnimationUtils.loadAnimation(this, R.anim.login_icon_anim);
         imageView.startAnimation(iconAnimation);
 
-        permissionsGranted = isWriteStoragePermissionGranted();
+        permissionsGranted = isWriteStoragePermissionGranted()&& PermissionManager.hasCamPermission(this);
 
     }
 
@@ -67,7 +69,8 @@ public class LoginUserActivity extends MyBaseActivity {
 
             authenticateUser.enqueue(new Callback<AuthenticationRequestResult>() {
                 @Override
-                public void onResponse(Call<AuthenticationRequestResult> call, Response<AuthenticationRequestResult> response) {
+                public void onResponse(@NonNull Call<AuthenticationRequestResult> call, @NonNull Response<AuthenticationRequestResult> response) {
+
 
                     if(response.code()>199 && response.code()<300){
                     puszekPrefs = mainContext.getSharedPreferences(

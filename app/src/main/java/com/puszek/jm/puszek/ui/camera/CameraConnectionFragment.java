@@ -361,17 +361,8 @@ public class CameraConnectionFragment extends Fragment {
             final StreamConfigurationMap map =
                     characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
-            // For still image captures, we use the largest available size.
-            final Size largest =
-                    Collections.max(
-                            Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)),
-                            new CompareSizesByArea());
-
             sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
-            // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
-            // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
-            // garbage capture data.
             previewSize =
                     chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                             inputSize.getWidth(),
@@ -539,8 +530,8 @@ public class CameraConnectionFragment extends Fragment {
                                         CaptureRequest.CONTROL_AF_MODE,
                                         CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
                                 // Flash is automatically enabled when necessary.
-                                previewRequestBuilder.set(
-                                        CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+//                                previewRequestBuilder.set(
+//                                        CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
 
                                 // Finally, we start displaying the camera preview.
                                 previewRequest = previewRequestBuilder.build();

@@ -3,13 +3,9 @@ package com.puszek.jm.puszek;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import es.dmoral.toasty.Toasty;
@@ -24,10 +20,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Toasty.Config.getInstance()
-                .setErrorColor(getColor(R.color.errorColor))
-                .setInfoColor(getColor(R.color.infoColor))
+                .setErrorColor(getColor(R.color.redColor))
+                .setInfoColor(getColor(R.color.blueColor))
                 .setSuccessColor(getColor(R.color.buttonGreenCenter))
-                .setWarningColor(getColor(R.color.warningColor))
+                .setWarningColor(getColor(R.color.yellowColor))
                 .setTextColor(getColor(R.color.backgroundLight))
                 .tintIcon(true)
                 .setTextSize(16)
@@ -54,8 +50,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginUser(View view) {
-        //startActivity(new Intent(getApplicationContext(),LoginUserActivity.class));
-        startActivity(new Intent(getApplicationContext(),MainMenuActivity.class));
+       startActivity(new Intent(getApplicationContext(),LoginUserActivity.class));
     }
 
     public void goToRegistrationPanel(View view) {
