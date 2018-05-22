@@ -15,6 +15,8 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.puszek.jm.puszek.R;
 import com.puszek.jm.puszek.tf.AutoFitTextureView;
@@ -31,6 +33,19 @@ public class LegacyCameraConnectionFragment extends Fragment {
     private Camera.PreviewCallback imageListener;
     private Size desiredSize;
 
+    private Switch mSwitch;
+    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                //flashLightOn();
+                mSwitch.setAlpha(1);
+            } else {
+                //flashLightOff();
+                mSwitch.setAlpha((float) 0.5);
+            }
+        }
+    };
+
     /**
      * The layout identifier to inflate for this Fragment.
      */
@@ -46,6 +61,7 @@ public class LegacyCameraConnectionFragment extends Fragment {
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
+
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
     static {
@@ -125,12 +141,27 @@ public class LegacyCameraConnectionFragment extends Fragment {
     @Override
     public View onCreateView(
             final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        return inflater.inflate(layout, container, false);
+
+        View fragmentView = inflater.inflate(layout,container,false);
+        mSwitch = fragmentView.findViewById(R.id.modeSwitch);
+        mSwitch.setThumbResource(R.drawable.flash);
+        mSwitch.setOnCheckedChangeListener(switchListener);
+
+        startBackgroundThread();
+        textureView = fragmentView.findViewById(R.id.autofitTextureView);
+        if (textureView.isAvailable()) {
+            camera.startPreview();
+        } else {
+            textureView.setSurfaceTextureListener(surfaceTextureListener);
+        }
+
+
+        return fragmentView;
     }
 
     @Override
     public void onViewCreated(final View view, final Bundle savedInstanceState) {
-        textureView = view.findViewById(R.id.autofitTextureView);
+        //textureView = view.findViewById(R.id.autofitTextureView);
     }
 
     @Override
