@@ -10,6 +10,7 @@ public class Product {
     @SerializedName("type")
     private WasteType wasteType;
 
+
     public int getProductId() {
         return productId;
     }
@@ -21,4 +22,6 @@ public class Product {
     public WasteType getWasteType() {
         return wasteType;
     }
+
+
 }

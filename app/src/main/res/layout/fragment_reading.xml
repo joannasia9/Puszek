@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/topLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.puszek.jm.puszek.tf.AutoFitTextureView
+        android:id="@+id/autofitTextureView"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/transparency"
+        app:layout_constraintEnd_toEndOf="@+id/transparency"
+        app:layout_constraintStart_toStartOf="@+id/transparency"
+        app:layout_constraintTop_toTopOf="@+id/transparency">
+
+    </com.puszek.jm.puszek.tf.AutoFitTextureView>
+
+
+    <com.puszek.jm.puszek.tf.OverlayView
+        android:id="@+id/overlayView"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/transparency"
+        app:layout_constraintEnd_toEndOf="@+id/transparency"
+        app:layout_constraintStart_toStartOf="@+id/transparency"
+        app:layout_constraintTop_toTopOf="@+id/transparency" />
+
+    <View
+        android:id="@+id/transparency"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        android:background="@drawable/camera_prev_border"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

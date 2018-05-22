@@ -1,9 +1,11 @@
 package com.puszek.jm.puszek;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -34,6 +36,7 @@ public class RegisterUserActivity extends MyBaseActivity {
     FieldsValidator validator;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,19 +53,34 @@ public class RegisterUserActivity extends MyBaseActivity {
 
         registerUserButton = findViewById(R.id.regUserButton);
 
-        View.OnClickListener animationListener = new View.OnClickListener() {
+//       final View.OnClickListener animationListener = new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setAnimation(v);
+//            }
+//        };
+
+        View.OnTouchListener animationOnTouchListener = new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                setAnimation(v);
+            public boolean onTouch(View v, MotionEvent event) {
+               setAnimation(v);
+                return false;
             }
         };
-        login.setOnClickListener(animationListener);
-        password.setOnClickListener(animationListener);
-        repeatedPassword.setOnClickListener(animationListener);
-        street.setOnClickListener(animationListener);
-        district.setOnClickListener(animationListener);
-        hNumber.setOnClickListener(animationListener);
-        email.setOnClickListener(animationListener);
+
+        login.setOnTouchListener(animationOnTouchListener);
+        password.setOnTouchListener(animationOnTouchListener);
+        repeatedPassword.setOnTouchListener(animationOnTouchListener);
+        street.setOnTouchListener(animationOnTouchListener);
+        district.setOnTouchListener(animationOnTouchListener);
+        hNumber.setOnTouchListener(animationOnTouchListener);
+        email.setOnTouchListener(animationOnTouchListener);
+//        password.setOnClickListener(animationListener);
+//        repeatedPassword.setOnClickListener(animationListener);
+//        street.setOnClickListener(animationListener);
+//        district.setOnClickListener(animationListener);
+//        hNumber.setOnClickListener(animationListener);
+//        email.setOnClickListener(animationListener);
 
         login.requestFocus();
 
@@ -112,7 +130,7 @@ public class RegisterUserActivity extends MyBaseActivity {
                     Toasty.error(getApplicationContext(), getString(R.string.user_exists), Toast.LENGTH_SHORT, true).show();
                     login.setError(getString(R.string.user_exists));
                     login.requestFocus();
-                    Log.e("REGISTERED USER ID", "onResponse: " + response.body().getId());
+                    Log.e("REGISTERED USER ID", "userExists");
                 } else {
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",true);

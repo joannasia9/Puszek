@@ -41,6 +41,12 @@
     <string name="access_token_id">access_token</string>
     <string name="refresh_token_id">refresh_token</string>
     <string name="wring_login_password">Błędny login lub hasło</string>
+    <string name="req_access">Wymagany dostęp do zdjęć i multimediów</string>
+    <string name="cam_not_supported">Kamera tego urządzenia nie jest wspierana</string>
+    <string name="err">Błąd</string>
+    <string name="no_result">Brak obiektu w bazie</string>
+    <string name="scan_bar">Skanuj barcode</string>
+    <string name="scan_box">Skanuj opakowanie</string>
 
     <string-array name="settings_entries">
        <item>Login</item>
@@ -50,6 +56,63 @@
         <item>Ulica</item>
     </string-array>
 
+    <string name="met">Metal</string>
+    <string name="pap">Papier</string>
+    <string name="pla">Plastik</string>
+    <string name="gre">Odpady zielone</string>
+    <string name="bio">Bioodpady</string>
+    <string name="big">Gabaryty</string>
+    <string name="mix">Zmieszane</string>
+    <string name="gla">Szkło</string>
+    <string name="dry">Segregowane suche</string>
+    <string name="box">Pojemnik:</string>
 
+    <string name="dep_date">Najbliższy termin wywozu</string>
+    <string name="box_colour">Kolor kosza</string>
+    <string name="change_pass">Zmień hasło</string>
+    <string name="current_val">Aktualna wartość:</string>
+    <string name="new_val">Nowa wartość:</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zatwierdź</string>
+    <string name="write">Wprowadź</string>
+    <string name="saved_succ">Zaktualizowano pomyślnie!</string>
+    <string name="saving_error">Błąd zapisu danych</string>
+    <string name="provide_new_password">Wprowadź nowe hasło</string>
+    <string name="modify_password">Modyfikuj hasło</string>
+    <string name="login_unmodif">Login nie ulega modyfikacji.</string>
+    <string name="value">Wartość:</string>
+    <string name="barcode_data">Dane barcode\'u</string>
+    <string name="product_name">Nazwa produktu</string>
+    <string name="welcome">Witaj, oto aktualne daty wywozu odpadów:</string>
+    <string name="current_termins">Aktualne terminy wywozu odpadów</string>
+
+    <string-array name="waste_types">
+        <item>cardboard</item>
+        <item>glass</item>
+        <item>metal</item>
+        <item>paper</item>
+        <item>plastic</item>
+        <item>trash</item>
+    </string-array>
+
+    <string-array name="waste_types_pl">
+        <item>Karton</item>
+        <item>Szkło</item>
+        <item>Metal</item>
+        <item>Papier</item>
+        <item>Plastik</item>
+        <item>Zmieszane</item>
+    </string-array>
+
+    <string-array name="waste_bar_types">
+        <item>Papier</item>
+        <item>Plastik</item>
+        <item>Metal</item>
+        <item>Szkło</item>
+        <item>Gabaryty</item>
+        <item>Bioodpady</item>
+        <item>Skóra</item>
+        <item>Zmieszane</item>
+    </string-array>
 
 </resources>

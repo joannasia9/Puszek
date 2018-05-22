@@ -11,12 +11,12 @@ import com.puszek.jm.puszek.R;
 
 public class MainMenuAdapter extends BaseAdapter {
     private Context context;
-    private Integer[] menuItemImages = {R.drawable.verify_item, R.drawable.add_item, R.drawable.settings_item};
+    private Integer[] menuItemImages = {R.drawable.barcode, R.drawable.box, R.drawable.settings};
     private String[] menuItemsTitles;
 
     public MainMenuAdapter(Context c){
         this.context = c;
-        this.menuItemsTitles= new String[]{c.getString(R.string.check), c.getString(R.string.add), c.getString(R.string.settings)};
+        this.menuItemsTitles= new String[]{c.getString(R.string.scan_bar), c.getString(R.string.scan_box), c.getString(R.string.settings)};
     }
 
     @Override

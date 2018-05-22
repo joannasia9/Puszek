@@ -1,4 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'de.undercouch.download'
+
+def models = ['inception_v1.zip',
+              'object_detection/ssd_mobilenet_v1_android_export.zip']
+
+def MODEL_URL = 'https://storage.googleapis.com/download.tensorflow.org/models'
 
 buildscript {
     
@@ -7,11 +13,52 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
-        
+        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'de.undercouch:gradle-download-task:3.4.3'
+    }
+}
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+// import DownloadModels task
+project.ext.ASSET_DIR = projectDir.toString() + '/assets'
+project.ext.TMP_DIR   = project.buildDir.toString() + '/downloads'
+
+task downloadFile(type: Download){
+    for (f in models) {
+        src "${MODEL_URL}/" + f
+    }
+    dest new File(project.ext.TMP_DIR)
+    overwrite true
+}
+
+task extractModels(type: Copy) {
+    for (f in models) {
+        def localFile = f.split("/")[-1]
+        from zipTree(project.ext.TMP_DIR + '/' + localFile)
+    }
+
+    into file(project.ext.ASSET_DIR)
+    fileMode  0644
+    exclude '**/LICENSE'
+
+    def needDownload = false
+    for (f in models) {
+        def localFile = f.split("/")[-1]
+        if (!(new File(project.ext.TMP_DIR + '/' + localFile)).exists()) {
+            needDownload = true
+        }
+    }
+
+    if (needDownload) {
+        dependsOn downloadFile
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleDebug') {
+        task.dependsOn 'extractModels'
+    }
+    if (task.name == 'assembleRelease') {
+        task.dependsOn 'extractModels'
     }
 }
 
@@ -26,3 +73,5 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
