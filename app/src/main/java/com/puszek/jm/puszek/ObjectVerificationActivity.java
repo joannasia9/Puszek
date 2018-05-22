@@ -28,7 +28,12 @@ import org.tensorflow.demo.env.BorderedText;
 import org.tensorflow.demo.env.ImageUtils;
 import org.tensorflow.demo.env.Logger;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 
 import retrofit2.Call;
@@ -70,6 +75,7 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setCurrentDate();
         dialogManager = new DialogManager(this);
         requestWasteTypes();
     }
@@ -196,12 +202,23 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
         if(dialogManager.getDialog() != null) dialogManager.getDialog().dismiss();
     }
 
+    @Override
+    public synchronized void onDestroy() {
+        super.onDestroy();
+        isActivityActive = false;
+    }
+
+    Date currentDate;
+    private void setCurrentDate(){
+        Calendar c = Calendar.getInstance();
+        currentDate = c.getTime();
+    }
+
     private void runOnUiDialog(final String results){
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                dialogManager = new DialogManager(ObjectVerificationActivity.this);
-                dialogManager.showBoxDetectedDialog(results,wasteTypes);
+                dialogManager.showBoxDetectedDialog(results,wasteTypes, currentDate);
             }
         });
     }

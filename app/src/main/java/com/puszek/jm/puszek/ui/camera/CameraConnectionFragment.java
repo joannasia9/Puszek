@@ -35,6 +35,8 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.puszek.jm.puszek.R;
@@ -79,6 +81,20 @@ public class CameraConnectionFragment extends Fragment {
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
      */
+
+    Switch mSwitch;
+    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked) {
+                //flashLightOn();
+                mSwitch.setAlpha(1);
+            } else {
+                //flashLightOff();
+                mSwitch.setAlpha((float) 0.5);
+            }
+        }
+    };
+
     private final TextureView.SurfaceTextureListener surfaceTextureListener =
             new TextureView.SurfaceTextureListener() {
                 @Override
@@ -309,7 +325,14 @@ public class CameraConnectionFragment extends Fragment {
     @Override
     public View onCreateView(
             final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-        return inflater.inflate(layout, container, false);
+            View fragmentView = inflater.inflate(R.layout.fragment_reading,container,false);
+            mSwitch = fragmentView.findViewById(R.id.modeSwitch);
+            mSwitch.setThumbResource(R.drawable.flash);
+            mSwitch.setOnCheckedChangeListener(switchListener);
+
+
+
+        return fragmentView;
     }
 
     @Override

@@ -15,7 +15,6 @@
  */
 package com.puszek.jm.puszek.helpers;
 
-import android.content.Context;
 import android.support.annotation.UiThread;
 
 import com.google.android.gms.vision.Detector;

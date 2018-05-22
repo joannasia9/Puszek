@@ -73,20 +73,9 @@ public abstract class CameraActivity extends MyBaseActivity
     private Runnable postInferenceCallback;
     private Runnable imageConverter;
 
-    Switch mSwitch;
+
     TextView verificationOptionTitle;
 
-    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                //flashLightOn();
-                mSwitch.setAlpha(1);
-            } else {
-                //flashLightOff();
-                mSwitch.setAlpha((float) 0.5);
-            }
-        }
-    };
 
     private String cameraId;
 
@@ -103,16 +92,13 @@ public abstract class CameraActivity extends MyBaseActivity
             PermissionManager.requestCamPermission(this);
         }
 
-        mSwitch = findViewById(R.id.modeSwitch);
-        mSwitch.setThumbResource(R.drawable.flash);
-        if (!isFlashAvailable()) mSwitch.setClickable(false);
         verificationOptionTitle = findViewById(R.id.verificationOptionTitle);
 
         String optionTitle = getString(R.string.scan) + "\n" + getString(R.string.packageStr);
 
         verificationOptionTitle.setText(optionTitle);
 
-        mSwitch.setOnCheckedChangeListener(switchListener);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
@@ -456,36 +442,6 @@ public abstract class CameraActivity extends MyBaseActivity
                 return 90;
             default:
                 return 0;
-        }
-    }
-
-    private boolean isFlashAvailable() {
-        boolean isAvailable = this.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-        if (!isAvailable) {
-            Toast.makeText(this, R.string.flash_unavailable, Toast.LENGTH_LONG).show();
-        }
-        return isAvailable;
-    }
-
-    CameraManager camManager;
-    public void flashLightOn() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            camManager = (CameraManager) this.getSystemService(Context.CAMERA_SERVICE);
-            try {
-                assert camManager != null;
-                cameraId = camManager.getCameraIdList()[0];
-                camManager.setTorchMode(cameraId, true);   //Turn ON flash
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void flashLightOff() {
-        try {
-            camManager.setTorchMode(cameraId, false);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
         }
     }
 

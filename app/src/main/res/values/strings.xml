@@ -100,6 +100,8 @@
         <item>Szkło</item>
         <item>Gabaryty</item>
         <item>Bioodpady</item>
+        <item>Skóra</item>
+        <item>Zmieszane</item>
     </string-array>
 
 </resources>
