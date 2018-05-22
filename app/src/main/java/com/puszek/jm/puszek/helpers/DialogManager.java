@@ -50,6 +50,9 @@ public class DialogManager {
         createBaseDialog();
     }
 
+    public DialogManager(){
+    }
+
     public void showBarcodeDetectedDialog(RequestedBarcodeData barcode, Date current) {
         this.currentDate = current;
         wasteTypeDateSet = barcode.getProduct().getWasteType().getScheduledDisposals();
@@ -216,10 +219,10 @@ public class DialogManager {
                 Collections.sort(allDates);
                 if(allDates.size()<5){
                     for (Date item : allDates) {
-                        tempDates.append(dateToString(item)).append("\n");
+                        tempDates.append(dateToString(item)).append("\n").append("\n");
                     }
                 } else {
-                    for (int i = 0; i<4; i++) tempDates.append(dateToString(allDates.get(i)));
+                    for (int i = 0; i<4; i++) tempDates.append(dateToString(allDates.get(i))).append("\n");
                 }
             }
         }
@@ -328,4 +331,31 @@ public class DialogManager {
     }
 
 
+    public String getSingleDateFromWasteTypes(WasteType[] types, String label, Date currentDate) {
+        this.currentDate = currentDate;
+        this.wasteTypes = types;
+        ArrayList<WasteType> wasteArray = getWasteTypeFromLabel(label);
+
+        if (wasteArray.size() != 0) {
+            ArrayList<Date> allDates = new ArrayList<>();
+            for (WasteType item : wasteArray) {
+                String[] scheduledDisposals = item.getScheduledDisposals();
+
+                for (String disposal : scheduledDisposals) {
+                    Date temp = stringToDate(disposal);
+                    if(temp.after(currentDate)) allDates.add(temp);
+                }
+            }
+
+            if(allDates.size() != 0){
+                Collections.sort(allDates);
+                return dateToString(allDates.get(0));
+            } else return "";
+        } else return "";
+
+    }
+
+    public void setWasteTypes(WasteType[] wasteTypes) {
+        this.wasteTypes = wasteTypes;
+    }
 }

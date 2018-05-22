@@ -83,6 +83,8 @@
     <string name="value">Wartość:</string>
     <string name="barcode_data">Dane barcode\'u</string>
     <string name="product_name">Nazwa produktu</string>
+    <string name="welcome">Witaj, oto aktualne daty wywozu odpadów:</string>
+    <string name="current_termins">Aktualne terminy wywozu odpadów</string>
 
     <string-array name="waste_types">
         <item>cardboard</item>
@@ -91,6 +93,15 @@
         <item>paper</item>
         <item>plastic</item>
         <item>trash</item>
+    </string-array>
+
+    <string-array name="waste_types_pl">
+        <item>Karton</item>
+        <item>Szkło</item>
+        <item>Metal</item>
+        <item>Papier</item>
+        <item>Plastik</item>
+        <item>Zmieszane</item>
     </string-array>
 
     <string-array name="waste_bar_types">

@@ -284,92 +284,96 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     BarcodeToAdd barcodeToAdd;
     int wasteType = 1;
 
+    Dialog addBarcodeDialog = null;
     private void showAddBarcodeToDbDialog(final String detectedBarcode){
         final TextView barcodeValue;
         final EditText productName;
         final Spinner wasteTypeSpinner;
         Button saveButton, cancelButton;
 
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_barcode);
+        if(addBarcodeDialog == null)addBarcodeDialog = new Dialog(getActivity());
+        if(isActivityActive) {
+            addBarcodeDialog.setContentView(R.layout.dialog_add_barcode);
 
-        barcodeValue = dialog.findViewById(R.id.bacodeValue);
-        String title = getActivity().getString(R.string.value) + " " + detectedBarcode;
-        barcodeValue.setText(title);
+            barcodeValue = addBarcodeDialog.findViewById(R.id.bacodeValue);
+            String title = getActivity().getString(R.string.value) + " " + detectedBarcode;
+            barcodeValue.setText(title);
 
-        productName = dialog.findViewById(R.id.productName);
-        wasteTypeSpinner = dialog.findViewById(R.id.wasteTypeSpinner);
+            productName = addBarcodeDialog.findViewById(R.id.productName);
+            wasteTypeSpinner = addBarcodeDialog.findViewById(R.id.wasteTypeSpinner);
 
-        ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_dropdown_item,
-                spinnerArray);
-        wasteTypeSpinner.setAdapter(spinnerArrayAdapter);
+            ArrayAdapter spinnerArrayAdapter = new ArrayAdapter<String>(getActivity(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    spinnerArray);
+            wasteTypeSpinner.setAdapter(spinnerArrayAdapter);
 
-        wasteTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
-                    case 0:
-                        wasteType = 1;
-                        break;
-                    case 1:
-                        wasteType = 1;
-                        break;
-                    case 2:
-                        wasteType = 1;
-                        break;
-                    case 3:
-                        wasteType = 2;
-                        break;
-                    case 4:
-                        wasteType = 4;
-                        break;
-                    case 5:
-                        wasteType = 5;
-                        break;
-                    case 6:
-                        wasteType = 1;
-                        break;
-                    case 7:
-                        wasteType = 3;
-                        break;
-                     default:
-                         wasteType = 8;
-                        break;
+            wasteTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        case 0:
+                            wasteType = 1;
+                            break;
+                        case 1:
+                            wasteType = 1;
+                            break;
+                        case 2:
+                            wasteType = 1;
+                            break;
+                        case 3:
+                            wasteType = 2;
+                            break;
+                        case 4:
+                            wasteType = 4;
+                            break;
+                        case 5:
+                            wasteType = 5;
+                            break;
+                        case 6:
+                            wasteType = 1;
+                            break;
+                        case 7:
+                            wasteType = 3;
+                            break;
+                        default:
+                            wasteType = 8;
+                            break;
+                    }
                 }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
 
-        cancelButton = dialog.findViewById(R.id.cancelButton);
-        saveButton = dialog.findViewById(R.id.saveButton);
+            cancelButton = addBarcodeDialog.findViewById(R.id.cancelButton);
+            saveButton = addBarcodeDialog.findViewById(R.id.saveButton);
 
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
+            cancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addBarcodeDialog.cancel();
+                }
+            });
 
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FieldsValidator validator = new FieldsValidator(getActivity());
-                if(validator.isValidField(productName)){
-                  barcodeToAdd = new BarcodeToAdd();
-                  barcodeToAdd.setCode(detectedBarcode);
-                  barcodeToAdd.setProductName(productName.getText().toString().trim());
-                  barcodeToAdd.setWasteType(wasteType);
-                  addBarcodeToDb(barcodeToAdd);
-                  dialog.cancel();
-                } else dialog.cancel();
-            }
-        });
-        dialog.show();
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FieldsValidator validator = new FieldsValidator(getActivity());
+                    if(validator.isValidField(productName)){
+                        barcodeToAdd = new BarcodeToAdd();
+                        barcodeToAdd.setCode(detectedBarcode);
+                        barcodeToAdd.setProductName(productName.getText().toString().trim());
+                        barcodeToAdd.setWasteType(wasteType);
+                        addBarcodeToDb(barcodeToAdd);
+                        addBarcodeDialog.cancel();
+                    } else addBarcodeDialog.cancel();
+                }
+            });
+            addBarcodeDialog.show();
+        }
+
     }
 
     private void addBarcodeToDb(final BarcodeToAdd barcode){

@@ -11,6 +11,7 @@ import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -25,9 +26,11 @@ import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
@@ -39,10 +42,12 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.gms.vision.CameraSource;
 import com.puszek.jm.puszek.R;
 import com.puszek.jm.puszek.tf.AutoFitTextureView;
 import org.tensorflow.demo.env.Logger;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,19 +86,6 @@ public class CameraConnectionFragment extends Fragment {
      * {@link android.view.TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
      */
-
-    Switch mSwitch;
-    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                //flashLightOn();
-                mSwitch.setAlpha(1);
-            } else {
-                //flashLightOff();
-                mSwitch.setAlpha((float) 0.5);
-            }
-        }
-    };
 
     private final TextureView.SurfaceTextureListener surfaceTextureListener =
             new TextureView.SurfaceTextureListener() {
@@ -325,14 +317,7 @@ public class CameraConnectionFragment extends Fragment {
     @Override
     public View onCreateView(
             final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
-            View fragmentView = inflater.inflate(R.layout.fragment_reading,container,false);
-            mSwitch = fragmentView.findViewById(R.id.modeSwitch);
-            mSwitch.setThumbResource(R.drawable.flash);
-            mSwitch.setOnCheckedChangeListener(switchListener);
-
-
-
-        return fragmentView;
+        return inflater.inflate(R.layout.fragment_reading,container,false);
     }
 
     @Override
@@ -621,5 +606,7 @@ public class CameraConnectionFragment extends Fragment {
                     (long) lhs.getWidth() * lhs.getHeight() - (long) rhs.getWidth() * rhs.getHeight());
         }
     }
+
+
 
 }

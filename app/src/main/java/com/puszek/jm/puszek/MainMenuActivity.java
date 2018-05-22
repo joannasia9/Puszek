@@ -1,6 +1,8 @@
 package com.puszek.jm.puszek;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,10 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.puszek.jm.puszek.adapters.MainMenuAdapter;
+import com.puszek.jm.puszek.notifications.Receiver;
 import com.puszek.jm.puszek.utils.PermissionResultCallback;
 import com.puszek.jm.puszek.utils.PermissionUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainMenuActivity extends MyBaseActivity implements PermissionResultCallback{
     ListView listView;
@@ -25,6 +31,7 @@ public class MainMenuActivity extends MyBaseActivity implements PermissionResult
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
+        setupNotifications();
         requestPermissions();
 
         listView = findViewById(R.id.menuListView);
@@ -49,6 +56,17 @@ public class MainMenuActivity extends MyBaseActivity implements PermissionResult
             }
         });
 
+    }
+
+
+    private void setupNotifications(){
+        Intent myBroadcastIntent = new Intent(String.valueOf(getApplicationContext()));
+        myBroadcastIntent.setAction("com.puszek.jm.puszek.GET_NOTIFICATION");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy",new Locale("pl"));
+        String date = format.format(Calendar.getInstance().getTime());
+        myBroadcastIntent.putExtra("current_date",date);
+
+        sendBroadcast(myBroadcastIntent);
     }
 
     private void requestPermissions() {

@@ -158,13 +158,17 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
 
                         if (isActivityActive && results.size() != 0) {
                             Log.i("OBJECT DETECTED", results.get(0).getTitle());
-                            if (dialogManager.getDialog() != null) {
-                                if (!dialogManager.getDialog().isShowing()) {
+
+                            if (results.get(0).getConfidence()>0.5){
+                                if (dialogManager.getDialog() != null ) {
+                                    if (!dialogManager.getDialog().isShowing()) {
+                                        runOnUiDialog(results.get(0).getTitle());
+                                    }
+                                } else {
                                     runOnUiDialog(results.get(0).getTitle());
                                 }
-                            } else {
-                                runOnUiDialog(results.get(0).getTitle());
                             }
+
                         }
 
                         if(isActivityActive) {

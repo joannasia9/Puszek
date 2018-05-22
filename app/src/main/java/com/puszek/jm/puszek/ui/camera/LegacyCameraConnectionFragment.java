@@ -33,18 +33,6 @@ public class LegacyCameraConnectionFragment extends Fragment {
     private Camera.PreviewCallback imageListener;
     private Size desiredSize;
 
-    private Switch mSwitch;
-    CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                //flashLightOn();
-                mSwitch.setAlpha(1);
-            } else {
-                //flashLightOff();
-                mSwitch.setAlpha((float) 0.5);
-            }
-        }
-    };
 
     /**
      * The layout identifier to inflate for this Fragment.
@@ -143,10 +131,6 @@ public class LegacyCameraConnectionFragment extends Fragment {
             final LayoutInflater inflater, final ViewGroup container, final Bundle savedInstanceState) {
 
         View fragmentView = inflater.inflate(layout,container,false);
-        mSwitch = fragmentView.findViewById(R.id.modeSwitch);
-        mSwitch.setThumbResource(R.drawable.flash);
-        mSwitch.setOnCheckedChangeListener(switchListener);
-
         startBackgroundThread();
         textureView = fragmentView.findViewById(R.id.autofitTextureView);
         if (textureView.isAvailable()) {
