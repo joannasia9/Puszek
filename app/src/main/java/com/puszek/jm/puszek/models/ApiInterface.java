@@ -18,7 +18,8 @@ public interface ApiInterface {
     Call<AuthenticationRequestResult> authenticate(@Body AuthenticationRequest request);
 
     @GET("/api/v1/barcodes/{code}/")
-    Call<RequestedBarcodeData> getBarcodeData(@Path("code") String barcodeCode, @Header("Authorization") String accessToken);
+    Call<RequestedBarcodeData> getBarcodeData(@Path("code") String barcodeCode,
+                                              @Header("Authorization") String accessToken);
 
     @GET("/api/v1/waste-types/")
     Call<WasteType[]> getWasteTypes(@Header("Authorization") String accessToken);
@@ -27,12 +28,18 @@ public interface ApiInterface {
     Call<RegisteredUser> getCurrentUser(@Header("Authorization") String accessToken);
 
     @PUT("/api/v1/users/current/")
-    Call<RegisteredUser> updateUser(@Header("Authorization") String accessToken, @Body User user);
+    Call<RegisteredUser> updateUser(@Header("Authorization") String accessToken,
+                                    @Body User user);
 
     @PUT("/api/v1/users/current/change-password/")
-    Call<RegisteredUser> updatePassword(@Header("Authorization") String accessToken, @Body Password password);
+    Call<RegisteredUser> updatePassword(@Header("Authorization") String accessToken,
+                                        @Body Password password);
 
     @POST("/api/v1/barcodes/")
     Call<RequestedBarcodeData> addBarcode(@Body BarcodeToAdd barcode);
 
 }
+
+
+
+

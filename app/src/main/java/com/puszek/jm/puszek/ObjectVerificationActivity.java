@@ -16,6 +16,7 @@ import android.util.Size;
 import android.util.TypedValue;
 
 import com.puszek.jm.puszek.helpers.DialogManager;
+import com.puszek.jm.puszek.helpers.OnActivityStatusChangedListener;
 import com.puszek.jm.puszek.models.APIClient;
 import com.puszek.jm.puszek.models.ApiInterface;
 import com.puszek.jm.puszek.models.RequestedBarcodeData;
@@ -71,12 +72,22 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
 
     private BorderedText borderedText;
     private DialogManager dialogManager;
+    private OnActivityStatusChangedListener onActivityStatusChangedListener;
+
+    public OnActivityStatusChangedListener getOnActivityStatusChangedListener() {
+        return onActivityStatusChangedListener;
+    }
+
+    public void setOnActivityStatusChangedListener(OnActivityStatusChangedListener onActivityStatusChangedListener) {
+        this.onActivityStatusChangedListener = onActivityStatusChangedListener;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setCurrentDate();
         dialogManager = new DialogManager(this);
+        onActivityStatusChangedListener.OnActivityStatusChanged(true);
         requestWasteTypes();
     }
 
@@ -156,10 +167,11 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
                         lastProcessingTimeMs = SystemClock.uptimeMillis() - startTime;
                         LOGGER.i("Detect: %s", results);
 
-                        if (isActivityActive && results.size() != 0) {
+                        if (results.size() != 0) {
                             Log.i("OBJECT DETECTED", results.get(0).getTitle());
 
-                            if (results.get(0).getConfidence()>0.5){
+                            if (results.get(0).getConfidence()>0.7){
+                                lastResult = results.get(0).getTitle();
                                 if (dialogManager.getDialog() != null ) {
                                     if (!dialogManager.getDialog().isShowing()) {
                                         runOnUiDialog(results.get(0).getTitle());
@@ -170,23 +182,18 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
                             }
 
                         }
-
-                        if(isActivityActive) {
                             cropCopyBitmap = Bitmap.createBitmap(croppedBitmap);
                             requestRender();
                             readyForNextImage();
-                        }
-
                     }
                 });
     }
+String lastResult = "";
 
- Boolean isActivityActive = true;
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        isActivityActive = false;
         if(dialogManager.getDialog()!=null){
             if (dialogManager.getDialog().isShowing()) dialogManager.getDialog().dismiss();
         }
@@ -195,22 +202,17 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
     @Override
     public synchronized void onPause() {
         super.onPause();
-        isActivityActive = false;
+        onActivityStatusChangedListener.OnActivityStatusChanged(false);
         if(dialogManager.getDialog() != null) dialogManager.getDialog().dismiss();
     }
 
     @Override
     public synchronized void onStop() {
         super.onStop();
-        isActivityActive = false;
+        onActivityStatusChangedListener.OnActivityStatusChanged(false);
         if(dialogManager.getDialog() != null) dialogManager.getDialog().dismiss();
     }
 
-    @Override
-    public synchronized void onDestroy() {
-        super.onDestroy();
-        isActivityActive = false;
-    }
 
     Date currentDate;
     private void setCurrentDate(){
@@ -294,5 +296,11 @@ public class ObjectVerificationActivity extends CameraActivity implements ImageR
         };
 
         newThread.start();
+    }
+
+    @Override
+    public synchronized void onResume() {
+        super.onResume();
+        onActivityStatusChangedListener.OnActivityStatusChanged(true);
     }
 }

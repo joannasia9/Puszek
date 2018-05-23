@@ -40,6 +40,7 @@ import com.puszek.jm.puszek.helpers.BarcodeGraphicTracker;
 import com.puszek.jm.puszek.helpers.BarcodeTrackerFactory;
 import com.puszek.jm.puszek.helpers.DialogManager;
 import com.puszek.jm.puszek.helpers.FieldsValidator;
+import com.puszek.jm.puszek.helpers.OnActivityStatusChangedListener;
 import com.puszek.jm.puszek.models.APIClient;
 import com.puszek.jm.puszek.models.ApiInterface;
 import com.puszek.jm.puszek.models.BarcodeToAdd;
@@ -80,6 +81,15 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     private Switch mSwitch;
     private CameraSource.Builder builder;
     BarcodeDetector barcodeDetector;
+    OnActivityStatusChangedListener onActivityStatusChangedListener;
+
+    public OnActivityStatusChangedListener getOnActivityStatusChangedListener() {
+        return onActivityStatusChangedListener;
+    }
+
+    public void setOnActivityStatusChangedListener(OnActivityStatusChangedListener onActivityStatusChangedListener) {
+        this.onActivityStatusChangedListener = onActivityStatusChangedListener;
+    }
 
     CompoundButton.OnCheckedChangeListener switchListener = new CompoundButton.OnCheckedChangeListener() {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -98,7 +108,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setCurrentDate();
-        isActivityActive = true;
+
 
         barcodeReadingFragment = inflater.inflate(R.layout.fragment_barcode_reading, container, false);
 
@@ -111,7 +121,8 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         String[] spinnerItems = activity.getResources().getStringArray(R.array.waste_bar_types);
         spinnerArray.addAll(Arrays.asList(spinnerItems));
 
-        dialogManager = new DialogManager(activity);
+        dialogManager = new DialogManager(this);
+        onActivityStatusChangedListener.OnActivityStatusChanged(true);
         mPreview = barcodeReadingFragment.findViewById(R.id.cameraPreview);
         mGraphicOverlay = barcodeReadingFragment.findViewById(R.id.graphicOverlay);
 
@@ -168,14 +179,14 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
     @Override
     public void onResume() {
         super.onResume();
-        isActivityActive = true;
+        onActivityStatusChangedListener.OnActivityStatusChanged(true);
         startCameraSource();
     }
 
     @Override
     public void onPause() {
-        isActivityActive = false;
         super.onPause();
+        onActivityStatusChangedListener.OnActivityStatusChanged(false);
         if (mPreview != null) {
             mPreview.stop();
         }
@@ -183,8 +194,8 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
 
     @Override
     public void onDestroy() {
-        isActivityActive = false;
         super.onDestroy();
+        onActivityStatusChangedListener.OnActivityStatusChanged(false);
         if (mPreview != null) {
             mPreview.release();
         }
@@ -242,7 +253,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
 
                             if (barcodeData != null){
                                 Log.e(TAG, "onResponse: " + response.body().getProduct().getProductName());
-                                if(dialogManager.getDialog() != null && isActivityActive) {
+                                if(dialogManager.getDialog() != null) {
                                     if (!dialogManager.getDialog().isShowing())
                                         runOnUiDialog(barcodeData, currentDate);
                                 } else runOnUiDialog(barcodeData, currentDate);
@@ -269,7 +280,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         }
     }
 
-    private boolean isActivityActive = false;
+
 
     private void runOnUiThreadErrorToast(final String message){
 
@@ -292,7 +303,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
         Button saveButton, cancelButton;
 
         if(addBarcodeDialog == null)addBarcodeDialog = new Dialog(getActivity());
-        if(isActivityActive) {
+
             addBarcodeDialog.setContentView(R.layout.dialog_add_barcode);
 
             barcodeValue = addBarcodeDialog.findViewById(R.id.bacodeValue);
@@ -372,7 +383,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
                 }
             });
             addBarcodeDialog.show();
-        }
+
 
     }
 

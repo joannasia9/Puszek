@@ -1,5 +1,6 @@
 package com.puszek.jm.puszek.helpers;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
@@ -7,6 +8,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.puszek.jm.puszek.BarcodeReadingActivity;
+import com.puszek.jm.puszek.BarcodeReadingFragment;
+import com.puszek.jm.puszek.ObjectVerificationActivity;
 import com.puszek.jm.puszek.R;
 import com.puszek.jm.puszek.models.RequestedBarcodeData;
 import com.puszek.jm.puszek.models.ShortCodes;
@@ -23,6 +27,7 @@ import java.util.Locale;
 
 public class DialogManager {
     private Context context;
+
     private int bgResource;
     private String date ="";
     private Dialog dialog;
@@ -36,17 +41,32 @@ public class DialogManager {
 
     private String[] wasteTypeDateSet;
     private Date currentDate;
-
+    private OnActivityStatusChangedListener activityStatusChangedListener = new OnActivityStatusChangedListener() {
+        @Override
+        public void OnActivityStatusChanged(boolean isActive) {
+            isActivityActive = isActive;
+        }
+    };
     private View.OnClickListener okButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dialog.cancel();
         }
     };
+    private boolean isActivityActive = false;
 
-    public DialogManager(Context context) {
+    public DialogManager(BarcodeReadingFragment context) {
+        this.context = context.getContext();
+        this.wasteTypesString = context.getResources().getStringArray(R.array.waste_types);
+        context.setOnActivityStatusChangedListener(activityStatusChangedListener);
+        createBaseDialog();
+    }
+
+    public DialogManager(ObjectVerificationActivity context) {
         this.context = context;
         this.wasteTypesString = context.getResources().getStringArray(R.array.waste_types);
+
+        context.setOnActivityStatusChangedListener(activityStatusChangedListener);
         createBaseDialog();
     }
 
@@ -59,7 +79,7 @@ public class DialogManager {
         ShortCodes code = barcode.getProduct().getWasteType().getShortCode();
         if (code != null) {
             setDialogFields(code, wasteTypeDateSet);
-            dialog.show();
+           if (isActivityActive) dialog.show();
         }
     }
 
@@ -72,12 +92,12 @@ public class DialogManager {
         this.currentDate = currentDate;
 
         setDialogFields(result);
-        if (result.equals(wasteTypesString[0])
+        if ((result.equals(wasteTypesString[0])
                 || result.equals(wasteTypesString[1])
                 || result.equals(wasteTypesString[2])
                 || result.equals(wasteTypesString[3])
                 || result.equals(wasteTypesString[4])
-                || result.equals(wasteTypesString[5])) dialog.show();
+                || result.equals(wasteTypesString[5]))&&isActivityActive) dialog.show();
     }
 
     private void setDialogFields(String result) {
@@ -358,4 +378,5 @@ public class DialogManager {
     public void setWasteTypes(WasteType[] wasteTypes) {
         this.wasteTypes = wasteTypes;
     }
+
 }

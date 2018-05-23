@@ -7,12 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.puszek.jm.puszek.LoginActivity;
 import com.puszek.jm.puszek.MainMenuActivity;
 import com.puszek.jm.puszek.R;
 import com.puszek.jm.puszek.helpers.DialogManager;
@@ -23,7 +20,6 @@ import com.puszek.jm.puszek.models.WasteType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -32,7 +28,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Receiver extends BroadcastReceiver{
-    public static final int NOTIFICATION_REQUEST = 1234;
 
     private Context context;
     DialogManager dialogManager;
