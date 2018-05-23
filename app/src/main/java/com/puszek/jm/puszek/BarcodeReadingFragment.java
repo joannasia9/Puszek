@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -239,7 +240,7 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
                     final ApiInterface apiInterface = APIClient.getClient().create(ApiInterface.class);
                     detectedBarcodeValue = barcode.displayValue;
                     String barcodeString = barcode.displayValue + "/";
-                    String accessToken = "Bearer "+ puszekPrefs.getString("access_token","");
+                    final String accessToken = "Bearer "+ puszekPrefs.getString("access_token","");
 
 
                     final Call<RequestedBarcodeData> requestBarcodeData = apiInterface.getBarcodeData(barcodeString,accessToken);
@@ -258,12 +259,30 @@ public class BarcodeReadingFragment extends android.support.v4.app.Fragment impl
                                         runOnUiDialog(barcodeData, currentDate);
                                 } else runOnUiDialog(barcodeData, currentDate);
                             } else {
-                                activity.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showAddBarcodeToDbDialog(detectedBarcodeValue);
+                                if(dialogManager.getDialog()!= null){
+                                    if(!dialogManager.getDialog().isShowing()){
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showAddBarcodeToDbDialog(detectedBarcodeValue);
+                                            }
+                                        });
+                                    } else if (addBarcodeDialog == null) {
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showAddBarcodeToDbDialog(detectedBarcodeValue);
+                                            }
+                                        });
+                                    } else if(!addBarcodeDialog.isShowing()){
+                                        activity.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                showAddBarcodeToDbDialog(detectedBarcodeValue);
+                                            }
+                                        });
                                     }
-                                });
+                                }
                             }
                         }
 
